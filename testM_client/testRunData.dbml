@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QCTEST" Class="testRunDataDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.;Initial Catalog=QCTEST;Integrated Security=True" SettingsObjectName="testM_client.Properties.Settings" SettingsPropertyName="QCTESTConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.M_deviceConfig" Member="M_deviceConfig">
+    <Type Name="M_deviceConfig">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IP" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="Port" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="device" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="mark" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="M_deviceConfig_M_runScene" Member="M_runScene" ThisKey="ID" OtherKey="deviceID" Type="M_runScene" />
+    </Type>
+  </Table>
+  <Table Name="dbo.M_application" Member="M_application">
+    <Type Name="M_application">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="mark" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="runApkName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="package" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="mainActiviy" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="package2" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="isClear" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.M_runTestCase" Member="M_runTestCase">
+    <Type Name="M_runTestCase">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="testXML" Type="System.Xml.Linq.XElement" DbType="Xml" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="sceneID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="resultXML" Type="System.Xml.Linq.XElement" DbType="Xml" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="state" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="startDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="endDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="resultPath" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="M_runScene_M_runTestCase" Member="M_runScene" ThisKey="sceneID" OtherKey="ID" Type="M_runScene" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.M_testDemand" Member="M_testDemand">
+    <Type Name="M_testDemand">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="mark" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="PID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="baseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="isRun" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="runDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="visable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="apkName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="M_testDemand_M_testDemand" Member="M_testDemand2" ThisKey="ID" OtherKey="baseID" Type="M_testDemand" />
+      <Association Name="M_testDemand_M_runScene" Member="M_runScene" ThisKey="ID" OtherKey="DemandID" Type="M_runScene" />
+      <Association Name="M_testDemand_M_testDemand" Member="M_testDemand1" ThisKey="baseID" OtherKey="ID" Type="M_testDemand" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.M_runScene" Member="M_runScene">
+    <Type Name="M_runScene">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="mark" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="creatUser" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="creatDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="deviceID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DemandID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="installResult" Type="System.String" DbType="NVarChar(400)" CanBeNull="true" />
+      <Association Name="M_runScene_M_runTestCase" Member="M_runTestCase" ThisKey="ID" OtherKey="sceneID" Type="M_runTestCase" />
+      <Association Name="M_deviceConfig_M_runScene" Member="M_deviceConfig" ThisKey="deviceID" OtherKey="ID" Type="M_deviceConfig" IsForeignKey="true" />
+      <Association Name="M_testDemand_M_runScene" Member="M_testDemand" ThisKey="DemandID" OtherKey="ID" Type="M_testDemand" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+</Database>

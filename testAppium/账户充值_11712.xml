@@ -1,0 +1,40 @@
+<TestCase desc="账户充值" customno="11712" id="11712">
+  <Step name="U_InitStep" desc="打开太富">
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击登录">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="登录" />
+    <ParamBinding name="index" value="1" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击我的账户">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="我的账户" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击充值入口">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="UIAStaticText" />
+    <ParamBinding name="textContent" value="余额" />
+    <ParamBinding name="index" value="1" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_CheckStep" desc="检查点">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="账户充值" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+</TestCase>

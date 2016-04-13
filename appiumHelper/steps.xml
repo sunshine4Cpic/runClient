@@ -1,0 +1,37 @@
+﻿<Steps>
+    <Step name="U_InitStep" desc="程序初始化">
+      <ParamBinding name="waitTime"/>
+    </Step>
+    <Step name="U_ClickStep" desc="点击控件">
+      <ParamBinding name="id"/>
+      <ParamBinding name="tagName"/>
+      <ParamBinding name="textContent"/>
+      <ParamBinding name="index"/>
+      <ParamBinding name="userXPath"/>
+       <ParamBinding name="PointXY"/>
+      <ParamBinding name="waitTime"/>
+    </Step>
+    <Step name="U_EditStep" desc="输入控件">
+      <ParamBinding name="id"/>
+      <ParamBinding name="tagName"/>
+      <ParamBinding name="textContent"/>
+      <ParamBinding name="index"/>
+      <ParamBinding name="userXPath"/>
+      <ParamBinding name="inputText"/>
+      <ParamBinding name="clearMode"/>
+      <ParamBinding name="InputCompleteClick"/>
+      <ParamBinding name="waitTime"/>
+    </Step>
+    <Step name="U_SwipStep" desc="滑动">
+      <ParamBinding name="waitTime"/>
+      <ParamBinding name="Direction"/>
+    </Step>
+  <Step name="U_CheckStep"  desc="检查点" >
+    <ParamBinding name="id"/>
+    <ParamBinding name="tagName"/>
+    <ParamBinding name="textContent"/>
+    <ParamBinding name="index"/>
+    <ParamBinding name="userXPath"/>
+    <ParamBinding name="waitTime"/>
+  </Step>
+  </Steps>

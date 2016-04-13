@@ -1,0 +1,44 @@
+<TestCase desc="提现金额为0" customno="11730" id="11730">
+  <Step name="U_InitStep" desc="打开太富">
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击登录">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="登录" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击提现">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="提现" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_EditStep" desc="输入金额">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="请输入提现金额" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="inputText" value="0" />
+
+    <ParamBinding name="clearMode" value="0"/>
+    <ParamBinding name="InputCompleteClick" value="确定"/>
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+  <Step name="U_ClickStep" desc="点击确认提现">
+    <ParamBinding name="id" value="" />
+    <ParamBinding name="tagName" value="" />
+    <ParamBinding name="textContent" value="确认提现" />
+    <ParamBinding name="index" value="" />
+    <ParamBinding name="userXPath" value="" />
+    <ParamBinding name="PointXY" value="" />
+    <ParamBinding name="waitTime" value="" />
+  </Step>
+</TestCase>
