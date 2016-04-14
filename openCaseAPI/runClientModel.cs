@@ -27,7 +27,7 @@ namespace openCaseAPI
 
     public class caseResult_req
     {
-        public XmlElement resultXML { set; get; }
+        public XElement resultXML { set; get; }
         public DateTime startDate { set; get; }
         public DateTime endDate { set; get; }
         public int state { set; get; }

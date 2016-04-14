@@ -142,12 +142,58 @@ namespace openCaseAPI
             }
         }
 
+        public static XElement GetSceneCase(int id)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(id);
+                //创建连接
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/RunScript/" + id);
+                //超时间毫秒为单位
+                mHttpRequest.Timeout = 180000;
+                //发送请求的方式
+                mHttpRequest.Method = "GET";
+                //发送的协议
+
+                mHttpRequest.Accept = "application/xml, text/xml";
+                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
+                mHttpRequest.ContentType = "application/xml";
+
+                //字节范围
+                mHttpRequest.AddRange(100, 10000);
+                //是否和请求一起发送
+                mHttpRequest.UseDefaultCredentials = true;
+                //创建一个响应对象
+                HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
+
+                HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
+                StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
+                {
+
+
+                    string pp = reader.ReadToEnd().ToString();
+                    XElement Testxml = XElement.Parse(pp);
+                    //return testxml;
+                    Console.WriteLine(Testxml);
+                    return Testxml;
+                }
+
+
+            }
+
+            catch (Exception)
+            {
+                return null;
+
+            }
+        }
+
         public static void caseResult(XElement resultXML, DateTime startDate, DateTime endDate, int state, string resultPath, int ID)
         {
 
             try
             {
-                // caseresult.resultXML = resultXML;
+                caseresult.resultXML = resultXML;
                 caseresult.startDate = startDate;
                 caseresult.endDate = endDate;
                 caseresult.state = state;
@@ -155,57 +201,6 @@ namespace openCaseAPI
 
 
                 string Json = JsonConvert.SerializeObject(caseresult);
-                HttpWebRequest nHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/caseResult/" + ID);
-                //超时间毫秒为单位
-                nHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                nHttpRequest.Method = "POST";
-                //发送的协议
-
-                nHttpRequest.Accept = "application/json, text/json";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";
-                nHttpRequest.ContentType = "application/json";
-
-                //字节范围
-                nHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                nHttpRequest.UseDefaultCredentials = true;
-                //写数据信息的流对象
-
-                StreamWriter wMessages = new StreamWriter(nHttpRequest.GetRequestStream());
-                //写入的流以XMl格式写入
-                wMessages.Write(Json);
-                //关闭写入流
-                wMessages.Close();
-                //创建一个响应对象
-                HttpWebResponse nHttpResponse = (HttpWebResponse)nHttpRequest.GetResponse();
-
-                if (nHttpResponse.StatusCode == HttpStatusCode.OK)
-                {
-
-                    HttpWebResponse Response = (HttpWebResponse)nHttpRequest.GetResponse();
-                    StreamReader Reader = new StreamReader(Response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                    {
-
-                        Console.WriteLine(Reader.ReadToEnd());
-                    }
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-
-
-
-        }
-
-        public static void caseResult(string req, int ID)
-        {
-
-            try
-            {
-                string Json = JsonConvert.SerializeObject(req);
                 HttpWebRequest nHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/caseResult/" + ID);
                 //超时间毫秒为单位
                 nHttpRequest.Timeout = 180000;
