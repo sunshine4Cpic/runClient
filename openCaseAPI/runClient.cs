@@ -13,20 +13,22 @@ namespace openCaseAPI
     {
 
         public static Uri webAddress { get; set; }
+        Uri uriAddress = new Uri(webAddress, "registerDevice");
         AutoRunSceneModel RunModel;
         List<runCaseSimpleModel> caselist;
         registerDevice_req Req;
         caseResult_req caseresult;
         public static application_res res;
+        
 
-        public string registerDevice(string req, string ServerURL)
+        public string registerDevice(string req)
         {
             try
             {
-                Uri uriAddress = new Uri(webAddress, "registerDevice");
+                
                 string json = JsonConvert.SerializeObject(req);
                 //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(ServerURL + "api/runClient/registerDevice");
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(uriAddress + "api/runClient/registerDevice");
                 //超时间毫秒为单位
                 mHttpRequest.Timeout = 180000;
                 //发送请求的方式
@@ -76,13 +78,13 @@ namespace openCaseAPI
                 return ll;
             }
         }
-        public AutoRunSceneModel GetRunScene(string device, string ServerURL)
+        public AutoRunSceneModel GetRunScene(string device)
         {
             try
             {
                 string json = JsonConvert.SerializeObject(device);
                 //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(ServerURL + "api/runClient/AutoRunScene?device=" + device);
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(uriAddress + "api/runClient/AutoRunScene?device=" + device);
                 //超时间毫秒为单位
                 mHttpRequest.Timeout = 180000;
                 //发送请求的方式
@@ -136,7 +138,7 @@ namespace openCaseAPI
             }
         }
 
-        public XElement GetSceneCase(int id, string ServerURL)
+        public XElement GetSceneCase(int id)
         {
             try
             {
@@ -145,7 +147,7 @@ namespace openCaseAPI
 
                 string json = JsonConvert.SerializeObject(id);
                 //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(ServerURL + "api/runClient/RunScript/" + id);
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(uriAddress + "api/runClient/RunScript/" + id);
                 //超时间毫秒为单位
                 mHttpRequest.Timeout = 180000;
                 //发送请求的方式
@@ -186,13 +188,13 @@ namespace openCaseAPI
             }
         }
 
-        public void caseResult(string req, string ServerURL, int ID)
+        public void caseResult(string req, int ID)
         {
 
             try
             {
                 string Json = JsonConvert.SerializeObject(req);
-                HttpWebRequest nHttpRequest = (HttpWebRequest)HttpWebRequest.Create(ServerURL + "api/runClient/caseResult/" + ID);
+                HttpWebRequest nHttpRequest = (HttpWebRequest)HttpWebRequest.Create(uriAddress + "api/runClient/caseResult/" + ID);
                 //超时间毫秒为单位
                 nHttpRequest.Timeout = 180000;
                 //发送请求的方式
@@ -236,14 +238,15 @@ namespace openCaseAPI
 
 
         }
-        public static application_res GetApk(XElement xe, string ServerURL)
+        public static application_res GetApk(XElement xe)
         {
+            Uri uriAddress = new Uri(webAddress, "registerDevice");
             try
             {
                 var appID = xe.XPathSelectElement("//ParamBinding[@name='applicationID']");
                 string json = JsonConvert.SerializeObject(appID);
                 //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(ServerURL + "api/runClient/application/" + appID);
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(uriAddress + "api/runClient/application/" + appID);
                 //超时间毫秒为单位
                 mHttpRequest.Timeout = 180000;
                 //发送请求的方式
