@@ -39,9 +39,16 @@ namespace openCaseAPI
         {
             if (DebugEvent != null)
             { // 如果有对象注册  
-                DebugEvent.BeginInvoke(this, e, null, null);
+                foreach (DebugEventHandler de in DebugEvent.GetInvocationList())
+                {
+                    de.BeginInvoke(this, e, null, null);
+                }
                
             }
+
+           
+            
+          
         }
 
         protected void OnScene()
