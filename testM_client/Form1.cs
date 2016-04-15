@@ -17,6 +17,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using openCaseAPI;
+
 namespace testM_client
 {
 
@@ -30,7 +32,6 @@ namespace testM_client
 
         List<phoneDriver> pdl;//设备列表
 
-        phoneDriver DdbugPD;//选中的设备
 
         public Form1()
         {
@@ -65,62 +66,40 @@ namespace testM_client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
+
+            Uri webAddress = new Uri("http://localhost:20349");
+
+            runClient rc = new runClient(webAddress);
+
+            testHelper.rc = rc;
+
+            var phone = this.listBox1.SelectedItem as phoneDriver;
+
+            rc.DebugEvent += phone.Debug;
+
+            foreach (var p in pdl)
             {
-                updatePhoneData();
-                logHelper.log("移动设备数据库成功");
-            }
-            catch (Exception)
-            {
-                logHelper.error("移动设备数据库更新失败");
+                rc.registerDevice(p);
             }
 
-            if (ServiceThread == null)
-            {
-                ServiceThread = new Thread(new ThreadStart(HTTPserver));
-                ServiceThread.IsBackground = true;
-                ServiceThread.Start();
-            }
-          
-            (sender as Button).Enabled = false;
-        }
-
-        /// <summary>
-        /// 更新数据库信息
-        /// </summary>
-        private void updatePhoneData()
-        {
-            
-            if(IP==null) return;
-            testRunDataDataContext trddc = new testRunDataDataContext();
-
-            foreach(var p in pdl)
-            {
-                M_deviceConfig mdc = trddc.M_deviceConfig.Where(t => t.device == p.device).FirstOrDefault();
-                if(mdc!=null)
-                {
-                    mdc.IP = IP;
-                    trddc.SubmitChanges();
-                    p.model = mdc.mark;
-                    
-                }else
-                {
-                    M_deviceConfig mdcnew = new M_deviceConfig();
-                    mdcnew.IP = IP;
-                    mdcnew.device = p.device;
-                    mdcnew.Port = 8500;
-                    mdcnew.mark = "新设备:" + p.model;
-                    trddc.M_deviceConfig.InsertOnSubmit(mdcnew);
-                    trddc.SubmitChanges();
-                }
-
-            }
-           
-            this.listBox1.DataSource = null;
             this.listBox1.DataSource = pdl;
             this.listBox1.DisplayMember = "mark";
             this.listBox1.ValueMember = "device";
+
+            (sender as Button).Enabled = false;
+
+            rc.startService();
+
+           
+
+
+            
+           
+          
+           
         }
+
+        
 
         private List<phoneDriver> getPhoneList()
         {
@@ -135,6 +114,7 @@ namespace testM_client
                 String x = mch.Value;
                 x = x.Substring(0, x.LastIndexOf("device"));
                 phoneDriver pd = new phoneDriver(x.Trim());
+                pd.IP = this.IP;
                 
                 pdl.Add(pd);
                 //this.listBox1.Items.Add(x.Trim());
@@ -169,63 +149,7 @@ namespace testM_client
 
         
 
-        private void HTTPserver()
-        {
-            using (HttpListener listerner = new HttpListener())
-            {
-                listerner.AuthenticationSchemes = AuthenticationSchemes.Anonymous;//指定身份验证 Anonymous匿名访问
-                listerner.Prefixes.Add("http://+:8500/testM/");
-
-                // listerner.Prefixes.Add("http://localhost/web/");
-                listerner.Start();
-                Console.WriteLine("ClientServer:8500 Start Successed.......");
-                //listerner.BeginGetContext();//异步调用(并发处理,暂时不需要)
-                while (true)
-                {
-                    //等待请求连接
-                    //没有请求则GetContext处于阻塞状态
-                    HttpListenerContext ctx = listerner.GetContext();
-                    ctx.Response.StatusCode = 200;//设置返回给客服端http状态代码
-                    ctx.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                    string runType = ctx.Request.QueryString["runType"];
-
-                   
-                    StreamReader reader = new StreamReader(ctx.Request.InputStream);
-                    if (runType == "Debug")//没有就是调试模式
-                    {
-                        try
-                        {
-                            DdbugPD = this.listBox1.SelectedItem as phoneDriver;
-
-                            Console.WriteLine("调试模式启动");
-                            DdbugPD.caseXml = XElement.Parse(reader.ReadToEnd());
-                            DdbugPD.Debug();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("调试模式错误.......err:" + e.Message);
-                        }
-                    }
-                    else if (runType == "Scene")//场景处理
-                    {
-                        try
-                        {
-                            foreach (phoneDriver pd in pdl)
-                            {
-                                pd.runScene();
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("调度错误.......");
-                            
-                        }
-                    }
-                    ctx.Response.Close();
-                  
-                }
-            }
-        }
+       
 
      
 
@@ -372,65 +296,6 @@ namespace testM_client
       
 
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.treeView1.Nodes.Clear();
-
-                XElement ResultX = XElement.Load(DdbugPD.debugPath + "test_result.xml");
-
-
-                var steps = ResultX.Descendants("Step").ToList();
-
-
-
-
-                foreach (var step in steps)
-                {
-                    TreeNode tn = new TreeNode();
-                    if (step.Attribute("desc") != null)
-                        tn.Text = step.Name + ":" + step.Attribute("desc").Value;
-                    else
-                        tn.Text = step.Name.ToString();
-                    if (step.Attribute("Photo") != null)
-                        tn.Name = DdbugPD.debugPath + step.Attribute("Photo").Value;
-
-                    if(step.Attribute("ResultStatic") != null)
-                    {
-                        string ResultStatic = step.Attribute("ResultStatic").Value;
-                        if(ResultStatic=="1")
-                        {
-                            tn.ForeColor = Color.Blue;
-                        }else
-                            tn.ForeColor = Color.Red;
-                    }
-
-
-                    var pbs = step.DescendantNodes();
-
-                    //string[] arrstr = step.
-                    foreach (var pb in pbs)
-                    {
-                        tn.Nodes.Add(new TreeNode(pb.ToString()));
-                    }
-
-                    this.treeView1.Nodes.Add(tn);
-
-                }
-            }
-            catch { }
-
-        }
-
-        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (treeView1.SelectedNode == null) return;
-            if (treeView1.SelectedNode.Name !="" &&  File.Exists(treeView1.SelectedNode.Name))
-            {
-                Process.Start(treeView1.SelectedNode.Name);
-            }
-        }
 
 
         #region 关闭事件

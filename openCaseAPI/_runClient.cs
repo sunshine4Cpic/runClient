@@ -5,11 +5,15 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace openCaseAPI
 {
     public partial class runClient
     {
+        
+
+
         //声明DEBUG委托  
         public delegate void DebugEventHandler(Object sender, DebugEventArgs e);
 
@@ -62,6 +66,17 @@ namespace openCaseAPI
 
         public void startService()
         {
+
+            Thread httpThread = new Thread(new ThreadStart(ServiceListerner));
+            httpThread.IsBackground = true;
+            httpThread.Start();
+
+        }
+
+
+        private void ServiceListerner()
+        {
+
             using (HttpListener listerner = new HttpListener())
             {
                 listerner.AuthenticationSchemes = AuthenticationSchemes.Anonymous;//指定身份验证 Anonymous匿名访问
@@ -86,10 +101,10 @@ namespace openCaseAPI
                     {
                         try
                         {
-                           XElement xe =  XElement.Parse(reader.ReadToEnd());
+                            XElement xe = XElement.Parse(reader.ReadToEnd());
 
-                           DebugEventArgs e = new DebugEventArgs(xe);
-                           OnDebug(e); // 调试
+                            DebugEventArgs e = new DebugEventArgs(xe);
+                            OnDebug(e); // 调试
                         }
                         catch (Exception e)
                         {

@@ -11,23 +11,16 @@ using System.Xml;
 using System.Xml.Linq;
 using BaseHelper;
 using System.Xml.XPath;
+using openCaseAPI;
 namespace testM_client
 {
-    public class phoneDriver
+    public class phoneDriver : registerDeviceModel
     {
 
-      //base("Data Source=.;Initial Catalog=QCTEST;Integrated Security=True", mappingSource)
-        //base(@"Data Source=10.196.37.97\MSSQLSERVER1;Initial Catalog=QCTEST;User ID=sa;Password=1qaz@WSX", mappingSource)
-        //base(@"Data Source=10.191.88.187\MSSQLSERVER1;Initial Catalog=QCTEST;User ID=sa;Password=Cpic1234", mappingSource)
+      
 
-        delegate void SceneDelegate();
+       
         
-        public string mark
-        {
-            get {
-                return model + "(" + device + ")";
-            }
-        }
 
         /// <summary>
         /// 端口(chromeDriver用)
@@ -37,16 +30,6 @@ namespace testM_client
             get;
             set;
         }
-
-        /// <summary>
-        /// 唯一标示
-        /// </summary>
-        public string device { set; get; }
-
-        /// <summary>
-        /// 机型
-        /// </summary>
-        public string model { set; get; }
 
        
 
@@ -91,7 +74,7 @@ namespace testM_client
             //robotiumHelper.robotiumTestCase rt = new robotiumHelper.robotiumTestCase();
             //rt.device = device;
             //this.caseHelper = rt;
-
+            this.mark = device;
             this.device = device;
             
 
@@ -103,12 +86,14 @@ namespace testM_client
         /// Debug执行
         /// </summary>
         /// <returns></returns>
-        public void Debug()
+        public void Debug(Object sender, runClient.DebugEventArgs e)
         {
             
             //DEBUG 目录
             string rPath = System.Environment.CurrentDirectory + "\\runTemp\\" + this.device + "\\";
             this.debugPath = rPath;
+
+            this.caseXml = e.caseXml;
 
 
             RunInit(rPath);
@@ -241,11 +226,7 @@ namespace testM_client
        /// </summary>
         public void runScene()
         {
-            if (this.status == phoneStatus.Idle)//设备未执行
-            {
-                SceneDelegate sh = new SceneDelegate(startRunScene);
-                sh.BeginInvoke(new AsyncCallback(runCallBack),this);
-            }
+            
 
         }
 

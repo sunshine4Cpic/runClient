@@ -4,14 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml;
+using System.Runtime.Serialization;
 
 namespace openCaseAPI
 {
-    public class registerDevice_req
+
+    [DataContract]
+    public class registerDeviceModel
     {
+        [DataMember]
         public string device { set; get; }
+
+        [DataMember]
         public string model { set; get; }
+
+        [DataMember]
         public string IP { set; get; }
+
+        [DataMember]
         public string mark { set; get; }
 
     }
@@ -23,6 +33,7 @@ namespace openCaseAPI
         public string mainActivity { set; get; }
         public string iosPackage { get; set; }
         public bool clearCache { set; get; }
+        public string robotiumApk { get; set; }
     }
 
     public class caseResult_req

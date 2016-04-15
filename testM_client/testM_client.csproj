@@ -139,6 +139,10 @@
       <Project>{031f2500-bb70-48b8-9044-1848cbfdf17c}</Project>
       <Name>chromeHelper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\openCaseAPI\openCaseAPI.csproj">
+      <Project>{bd7c650c-17f8-4ae7-92ed-2afcb393dcde}</Project>
+      <Name>openCaseAPI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\robotiumHelper\robotiumHelper.csproj">
       <Project>{2d225bb9-b3a3-4c62-b36b-38d5f4290ac6}</Project>
       <Name>robotiumHelper</Name>

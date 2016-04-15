@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using openCaseAPI;
 
 namespace testM_client
 {
@@ -15,6 +16,8 @@ namespace testM_client
     {
 
         public static List<M_application> mapps;
+
+        public static runClient rc{get;set;}
 
         static int port;
 
@@ -32,26 +35,7 @@ namespace testM_client
                 Console.WriteLine("M_application初始化失败");
             }
         }
-        /// <summary>
-        /// 获得robotium执行apk名
-        /// </summary>
-        /// <param name="xe"></param>
-        /// <returns></returns>
-        public static M_application getApk(XElement xe)
-        {
-            M_application app =null;
-
-            var appID = xe.XPathSelectElement("//ParamBinding[@name='applicationID']");
-            if (appID != null)
-            {
-                int ID = Convert.ToInt32(appID.Attribute("value").Value);
-                app = mapps.Where(t => t.ID == ID).FirstOrDefault();
-               
-            }
-            if (app == null)
-                app = testHelper.mapps.First();
-           return app;
-        }
+       
 
         public static string ExeCommand(string commandText)
         {
@@ -133,8 +117,8 @@ namespace testM_client
     /// </summary>
     public static class initHelp
     {
-        
-       
+
+
 
         public static void init(this robotiumHelper.robotiumTestCase _tc)
         {
@@ -143,12 +127,28 @@ namespace testM_client
             //testRunDataDataContext trddc = new testRunDataDataContext();
 
 
-            M_application app =  testHelper.getApk(_tc.caseXml);
-           
-                _tc.RunApk = app.runApkName;
-                _tc.package = app.package;
-                _tc.isClear = app.isClear;
-          
+
+
+
+            var appID = _tc.caseXml.XPathSelectElement("//ParamBinding[@name='applicationID']");
+
+            string ID = appID.Attribute("value").Value;
+
+            if (string.IsNullOrEmpty(ID))
+                ID = "null";
+
+            
+
+
+
+            var app = testHelper.rc.GetApk(ID);
+
+
+
+            _tc.RunApk = app.robotiumApk;
+            _tc.package = app.androidPackeg;
+            _tc.isClear = !app.clearCache;
+
 
         }
 
