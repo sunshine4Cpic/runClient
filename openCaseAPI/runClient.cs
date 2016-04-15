@@ -12,16 +12,22 @@ namespace openCaseAPI
     public partial class runClient
     {
 
-        public static Uri webAddress { get; set; }
+        public runClient(Uri webAddress)
+        {
+            this.webAddress = webAddress;
+        }
+
+        public Uri webAddress { get; set; }
       //123
 
 
-        public void registerDevice(registerDevice_req Req)
+        public void registerDevice(registerDeviceModel Req)
         {
             try
             {
                 //请求路径
                 Uri apiUri = new Uri(webAddress, "api/runClient/registerDevice");
+
                 //传递body
                 string body = JsonConvert.SerializeObject(Req);
                 //返回流
@@ -102,7 +108,7 @@ namespace openCaseAPI
 
         }
 
-        public application_res GetApk(int appID)
+        public application_res GetApk(string appID)
         {
             try
             {
