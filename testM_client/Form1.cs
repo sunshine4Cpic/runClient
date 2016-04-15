@@ -25,7 +25,7 @@ namespace testM_client
     public partial class Form1 : Form
     {
 
-        Thread ServiceThread;
+        
 
 
         string IP;//本机IP
@@ -51,7 +51,7 @@ namespace testM_client
             
             Console.ForegroundColor = ConsoleColor.White;
             InitializeComponent();
-            ServiceThread = null;
+           
             //screenth = null;
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();

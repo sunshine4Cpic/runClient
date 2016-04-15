@@ -160,9 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="242.ico" />
-    <EmbeddedResource Include="apkInstall\defaultshot.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <Content Include="apkInstall\empty.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
