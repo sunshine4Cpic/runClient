@@ -39,7 +39,8 @@ namespace openCaseAPI
         {
             if (DebugEvent != null)
             { // 如果有对象注册  
-                DebugEvent(this, e); // 调用所有注册对象的方法  
+                DebugEvent.BeginInvoke(this, e, null, null);
+               
             }
         }
 
@@ -47,7 +48,7 @@ namespace openCaseAPI
         {
             if (SceneEvent != null)
             { // 如果有对象注册  
-                SceneEvent(this); // 调用所有注册对象的方法  
+                SceneEvent.BeginInvoke(this, null, null);
             }
         }
 
