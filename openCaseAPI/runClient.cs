@@ -9,30 +9,127 @@ using System.Xml.XPath;
 
 namespace openCaseAPI
 {
-    public class runClient
+    public partial class runClient
     {
 
         public static Uri webAddress { get; set; }
-       // public static string webAddress = "http://139.196.177.74/";
-       // Uri uriAddress = new Uri(webAddress, "registerDevice");
-        public static AutoRunSceneModel RunModel;
-        public static List<runCaseSimpleModel> caselist;
-        public static registerDevice_req Req;
-        public static caseResult_req caseresult;
-        public static application_res res;
-        
+      
 
-        public static string registerDevice(string device,string ip,string model)
+
+        public void registerDevice(registerDevice_req Req)
         {
             try
             {
-                registerDevice_req Req = new registerDevice_req();
-                Req.device = device;
-                Req.IP = ip;
-                Req.model = model;
-                string json = JsonConvert.SerializeObject(Req);
+                //请求路径
+                Uri apiUri = new Uri(webAddress, "api/runClient/registerDevice");
+                //传递body
+                string body = JsonConvert.SerializeObject(Req);
+                //返回流
+                var reader = Postself(apiUri,body);
+                //流转字符串
+                string mark_repo = reader.ReadToEnd();
+
+
+                Req.mark = mark_repo;
+                
+            }
+            catch (Exception)
+            {
+                throw new Exception("error");
+            }
+        }
+
+        public  AutoRunSceneModel GetRunScene(string device)
+        {
+            try
+            {
+                Uri apiUri = new Uri(webAddress, "api/runClient/AutoRunScene?device=" + device);
+
+
+                var reader = Getself(apiUri);
+                string reposer = reader.ReadToEnd().ToString();
+                AutoRunSceneModel RunModel = JsonConvert.DeserializeObject<AutoRunSceneModel>(reposer);
+              
+                return RunModel;
+            }
+
+            catch (Exception)
+            {
+
+
+                return null;
+
+            }
+        }
+
+        public  XElement GetSceneCase(int id)
+        {
+            try
+            {
+                Uri apiUri = new Uri(webAddress, "api/runClient/RunScript/" + id);
+                var reader = Getself(apiUri);
+                string reposer = reader.ReadToEnd();
+                XElement Testxml = XElement.Parse(reposer);
+                //return testxml;
+                return Testxml;
+            }
+
+            catch (Exception)
+            {
+                return null;
+
+            }
+        }
+
+        public void caseResult(caseResult_req caseresult, int ID)
+        {
+
+            try
+            {
+                Uri apiUri = new Uri(webAddress, "api/runClient/caseResult/" + ID);
+                string body = JsonConvert.SerializeObject(caseresult);
+                var reader = Postself(apiUri,body);
+
+
+                Console.WriteLine(reader.ReadToEnd());
+            }
+            catch (Exception)
+            {
+
+            }
+
+
+
+        }
+
+        public application_res GetApk(int appID)
+        {
+            try
+            {
+               
+                Uri apiUri = new Uri(webAddress, "api/runClient/application/" + appID);
+                var reader = Getself(apiUri);
+
+                application_res res = JsonConvert.DeserializeObject<application_res>(reader.ReadToEnd());
+                
+                return res;
+           
+
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+
+
+
+        }
+
+        private StreamReader Postself(  Uri apiUri,string body)
+      {
                 //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/registerDevice");
+                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
                 //超时间毫秒为单位
                 mHttpRequest.Timeout = 180000;
                 //发送请求的方式
@@ -51,7 +148,7 @@ namespace openCaseAPI
 
                 StreamWriter swMessages = new StreamWriter(mHttpRequest.GetRequestStream());
                 //写入的流以XMl格式写入
-                swMessages.Write(json);
+                swMessages.Write(body);
                 //关闭写入流
                 swMessages.Close();
 
@@ -61,255 +158,41 @@ namespace openCaseAPI
                 //创建一个响应对象
                 HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
 
-                if (mHttpResponse.StatusCode == HttpStatusCode.OK)
-                {
-
-                    HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
-                    StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                    {
-                        string jj = reader.ReadToEnd().ToString();
-
-                        Console.WriteLine(reader.ReadToEnd());
-                        Req.mark = jj;
-                    }
-
-                }
-                return Req.mark;
-            }
-            catch (Exception)
-            {
-                string ll = "设备更新失败";
-                return ll;
-            }
-        }
-        public static AutoRunSceneModel GetRunScene(string device)
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(device);
-                //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/AutoRunScene?device=" + device);
-                //超时间毫秒为单位
-                mHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                mHttpRequest.Method = "GET";
-                //发送的协议
-
-                mHttpRequest.Accept = "application/json, text/json";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
-                mHttpRequest.ContentType = "application/json";
-
-                //字节范围
-                mHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                mHttpRequest.UseDefaultCredentials = true;
-                //创建一个响应对象
-                HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
-
-                if (mHttpResponse.StatusCode == HttpStatusCode.OK)
-                {
-
-                    HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
-                    StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                    {
-
-                        //Console.WriteLine(reader.ReadToEnd());
-                        string jj = reader.ReadToEnd().ToString();
-
-                        RunModel = JsonConvert.DeserializeObject<AutoRunSceneModel>(jj);
-
-
-                        Console.WriteLine("deviceId:" + RunModel.id);
-                        Console.WriteLine("name:" + RunModel.name);
-                        Console.WriteLine("installaApk:" + RunModel.installApk);
-
-                        Console.WriteLine("caseList:" + RunModel.caseList);
-
-                        caselist = RunModel.caseList;
-                    }
-                }
-
-                return RunModel;
-
-            }
-
-            catch (Exception)
-            {
-
-
-                return null;
-
-            }
-        }
-
-        public static XElement GetSceneCase(int id)
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(id);
-                //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/RunScript/" + id);
-                //超时间毫秒为单位
-                mHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                mHttpRequest.Method = "GET";
-                //发送的协议
-
-                mHttpRequest.Accept = "application/xml, text/xml";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
-                mHttpRequest.ContentType = "application/xml";
-
-                //字节范围
-                mHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                mHttpRequest.UseDefaultCredentials = true;
-                //创建一个响应对象
-                HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
 
                 HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
                 StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                {
-
-
-                    string pp = reader.ReadToEnd().ToString();
-                    XElement Testxml = XElement.Parse(pp);
-                    //return testxml;
-                    Console.WriteLine(Testxml);
-                    return Testxml;
-                }
-
-
-            }
-
-            catch (Exception)
-            {
-                return null;
-
-            }
-        }
-
-        public static void caseResult(XElement resultXML, DateTime startDate, DateTime endDate, int state, string resultPath, int ID)
-        {
-
-            try
-            {
-                caseresult.resultXML = resultXML;
-                caseresult.startDate = startDate;
-                caseresult.endDate = endDate;
-                caseresult.state = state;
-                caseresult.resultPath = resultPath;
-
-
-                string Json = JsonConvert.SerializeObject(caseresult);
-                HttpWebRequest nHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/caseResult/" + ID);
-                //超时间毫秒为单位
-                nHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                nHttpRequest.Method = "POST";
-                //发送的协议
-
-                nHttpRequest.Accept = "application/json, text/json";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";
-                nHttpRequest.ContentType = "application/json";
-
-                //字节范围
-                nHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                nHttpRequest.UseDefaultCredentials = true;
-                //写数据信息的流对象
-
-                StreamWriter wMessages = new StreamWriter(nHttpRequest.GetRequestStream());
-                //写入的流以XMl格式写入
-                wMessages.Write(Json);
-                //关闭写入流
-                wMessages.Close();
-                //创建一个响应对象
-                HttpWebResponse nHttpResponse = (HttpWebResponse)nHttpRequest.GetResponse();
-
-                if (nHttpResponse.StatusCode == HttpStatusCode.OK)
-                {
-
-                    HttpWebResponse Response = (HttpWebResponse)nHttpRequest.GetResponse();
-                    StreamReader Reader = new StreamReader(Response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                    {
-
-                        Console.WriteLine(Reader.ReadToEnd());
-                    }
-                }
-            }
-            catch (Exception)
-            {
+              
+                return reader;
 
             }
 
 
+        private StreamReader Getself(Uri apiUri)
 
-        }
-        public static application_res GetApk(XElement xe)
-        {
-            try
-            {
-                var appID = xe.XPathSelectElement("//ParamBinding[@name='applicationID']");
-                string json = JsonConvert.SerializeObject(appID);
-                //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(webAddress + "api/runClient/application/" + appID);
-                //超时间毫秒为单位
-                mHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                mHttpRequest.Method = "GET";
-                //发送的协议
+      {
+          HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
+          //超时间毫秒为单位
+          mHttpRequest.Timeout = 180000;
+          //发送请求的方式
+          mHttpRequest.Method = "GET";
+          //发送的协议
 
-                mHttpRequest.Accept = "application/json, text/json";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
-                mHttpRequest.ContentType = "application/json";
+          mHttpRequest.Accept = "application/json, text/json";
+          // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
+          mHttpRequest.ContentType = "application/json";
 
-                //字节范围
-                mHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                mHttpRequest.UseDefaultCredentials = true;
-                //创建一个响应对象
-                HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
+          //字节范围
+          mHttpRequest.AddRange(100, 10000);
+          //是否和请求一起发送
+          mHttpRequest.UseDefaultCredentials = true;
+          //创建一个响应对象
+          // HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
+          HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
+          StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
+          
 
-                if (mHttpResponse.StatusCode == HttpStatusCode.OK)
-                {
-
-                    HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
-                    StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-                    {
-
-                        //Console.WriteLine(reader.ReadToEnd());
-                        string jj = reader.ReadToEnd().ToString();
-                        res = new application_res();
-                        application_res appl = JsonConvert.DeserializeObject<application_res>(jj);
-
-
-
-                        Console.WriteLine("appId:" + res.id);
-                        Console.WriteLine("appname:" + res.name);
-                        Console.WriteLine("androidPackeg:" + res.androidPackeg);
-                        Console.WriteLine("mainActivity:" + res.mainActivity);
-                        Console.WriteLine("iosPackeg:" + res.iosPackage);
-                        Console.WriteLine("clearCache:" + res.clearCache);
-                        res.id = appl.id;
-                        res.name = appl.name;
-                        res.androidPackeg = appl.androidPackeg;
-                        res.mainActivity = appl.mainActivity;
-                        res.iosPackage = appl.iosPackage;
-                        res.clearCache = appl.clearCache;
-
-                    }
-                }
-                return res;
-            }
-            catch (Exception)
-            {
-
-                return null;
-            }
-
-
-
-        }
+          return reader;
+      }
 
     }
 }
