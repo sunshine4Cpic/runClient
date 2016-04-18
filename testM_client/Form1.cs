@@ -19,7 +19,7 @@ namespace testM_client
 
         
 
-
+        //ddd
         string IP;//本机IP
 
         List<phoneDriver> pdl;//设备列表
