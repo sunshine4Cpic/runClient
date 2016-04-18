@@ -47,6 +47,9 @@ namespace testM_client
             Console.OutputEncoding = Encoding.GetEncoding(936);
             
             InitializeComponent();
+
+            //demo
+            LogHelper.WriteLog(typeof(Form1), "测试Log4Net已经写入");
            
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();
