@@ -18,9 +18,13 @@ namespace openCaseAPI
         }
 
         public Uri webAddress { get; set; }
-      //123
 
 
+
+        /// <summary>
+        /// 注册执行设备
+        /// </summary>
+        /// <param name="Req"></param>
         public void registerDevice(registerDeviceModel Req)
         {
             try
@@ -31,13 +35,13 @@ namespace openCaseAPI
                 //传递body
                 string body = JsonConvert.SerializeObject(Req);
                 //返回流
-                var reader = Postself(apiUri,body);
+                var reader = Postself(apiUri, body);
                 //流转字符串
                 string mark_repo = reader.ReadToEnd();
 
 
                 Req.mark = mark_repo;
-                
+
             }
             catch (Exception)
             {
@@ -45,7 +49,7 @@ namespace openCaseAPI
             }
         }
 
-        public  AutoRunSceneModel GetRunScene(string device)
+        public AutoRunSceneModel GetRunScene(string device)
         {
             try
             {
@@ -55,7 +59,7 @@ namespace openCaseAPI
                 var reader = Getself(apiUri);
                 string reposer = reader.ReadToEnd().ToString();
                 AutoRunSceneModel RunModel = JsonConvert.DeserializeObject<AutoRunSceneModel>(reposer);
-              
+
                 return RunModel;
             }
 
@@ -68,7 +72,7 @@ namespace openCaseAPI
             }
         }
 
-        public  XElement GetSceneCase(int id)
+        public XElement GetSceneCase(int id)
         {
             try
             {
@@ -94,7 +98,7 @@ namespace openCaseAPI
             {
                 Uri apiUri = new Uri(webAddress, "api/runClient/caseResult/" + ID);
                 string body = JsonConvert.SerializeObject(caseresult);
-                var reader = Postself(apiUri,body);
+                var reader = Postself(apiUri, body);
 
 
                 Console.WriteLine(reader.ReadToEnd());
@@ -112,14 +116,14 @@ namespace openCaseAPI
         {
             try
             {
-               
+
                 Uri apiUri = new Uri(webAddress, "api/runClient/application/" + appID);
                 var reader = Getself(apiUri);
 
                 application_res res = JsonConvert.DeserializeObject<application_res>(reader.ReadToEnd());
-                
+
                 return res;
-           
+
 
             }
             catch (Exception)
@@ -127,78 +131,93 @@ namespace openCaseAPI
 
                 return null;
             }
+        }
+
+        public bool downApk(string apkName, string fileName)
+        {
+            Uri apkUri = new Uri(webAddress, "apkInstall/" + apkName);
+            try
+            {
+                WebClient wClient = new WebClient();
+                wClient.DownloadFile(apkUri, fileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("下载apk失败");
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+
+            return true;
+            
+        }
+
+        private StreamReader Postself(Uri apiUri, string body)
+        {
+            //创建连接
+            HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
+            //超时间毫秒为单位
+            mHttpRequest.Timeout = 180000;
+            //发送请求的方式
+            mHttpRequest.Method = "POST";
+            //发送的协议
+
+            mHttpRequest.Accept = "application/json, text/json";
+            // mHttpRequest.ContentType = "application/x-www-form-urlencoded";
+            mHttpRequest.ContentType = "application/json";
+
+            //字节范围
+            mHttpRequest.AddRange(100, 10000);
+            //是否和请求一起发送
+            mHttpRequest.UseDefaultCredentials = true;
+            //写数据信息的流对象
+
+            StreamWriter swMessages = new StreamWriter(mHttpRequest.GetRequestStream());
+            //写入的流以XMl格式写入
+            swMessages.Write(body);
+            //关闭写入流
+            swMessages.Close();
 
 
+            //mHttpRequest.Headers.Add("headName", .web.HttpUtility.UrlEncode.UrlEncode("value"));
+
+            //创建一个响应对象
+            HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
+
+
+            HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
+            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
+
+            return reader;
 
         }
 
-        private StreamReader Postself(  Uri apiUri,string body)
-      {
-                //创建连接
-                HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
-                //超时间毫秒为单位
-                mHttpRequest.Timeout = 180000;
-                //发送请求的方式
-                mHttpRequest.Method = "POST";
-                //发送的协议
-
-                mHttpRequest.Accept = "application/json, text/json";
-                // mHttpRequest.ContentType = "application/x-www-form-urlencoded";
-                mHttpRequest.ContentType = "application/json";
-
-                //字节范围
-                mHttpRequest.AddRange(100, 10000);
-                //是否和请求一起发送
-                mHttpRequest.UseDefaultCredentials = true;
-                //写数据信息的流对象
-
-                StreamWriter swMessages = new StreamWriter(mHttpRequest.GetRequestStream());
-                //写入的流以XMl格式写入
-                swMessages.Write(body);
-                //关闭写入流
-                swMessages.Close();
-
-
-                //mHttpRequest.Headers.Add("headName", .web.HttpUtility.UrlEncode.UrlEncode("value"));
-
-                //创建一个响应对象
-                HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
-
-
-                HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
-                StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-              
-                return reader;
-
-            }
-
 
         private StreamReader Getself(Uri apiUri)
+        {
+            HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
+            //超时间毫秒为单位
+            mHttpRequest.Timeout = 180000;
+            //发送请求的方式
+            mHttpRequest.Method = "GET";
+            //发送的协议
 
-      {
-          HttpWebRequest mHttpRequest = (HttpWebRequest)HttpWebRequest.Create(apiUri);
-          //超时间毫秒为单位
-          mHttpRequest.Timeout = 180000;
-          //发送请求的方式
-          mHttpRequest.Method = "GET";
-          //发送的协议
+            mHttpRequest.Accept = "application/json, text/json";
+            // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
+            mHttpRequest.ContentType = "application/json";
 
-          mHttpRequest.Accept = "application/json, text/json";
-          // mHttpRequest.ContentType = "application/x-www-form-urlencoded";表格的形式
-          mHttpRequest.ContentType = "application/json";
+            //字节范围
+            mHttpRequest.AddRange(100, 10000);
+            //是否和请求一起发送
+            mHttpRequest.UseDefaultCredentials = true;
+            //创建一个响应对象
+            // HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
+            HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
+            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
 
-          //字节范围
-          mHttpRequest.AddRange(100, 10000);
-          //是否和请求一起发送
-          mHttpRequest.UseDefaultCredentials = true;
-          //创建一个响应对象
-          // HttpWebResponse mHttpResponse = (HttpWebResponse)mHttpRequest.GetResponse();
-          HttpWebResponse response = (HttpWebResponse)mHttpRequest.GetResponse();
-          StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("utf-8"));
-          
 
-          return reader;
-      }
+            return reader;
+        }
 
     }
 }

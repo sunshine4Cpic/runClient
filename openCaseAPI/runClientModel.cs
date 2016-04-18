@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml;
 using System.Runtime.Serialization;
+using System.Net;
 
 namespace openCaseAPI
 {
@@ -62,6 +63,8 @@ namespace openCaseAPI
         /// 安装结果
         /// </summary>
         public string installResult { set; get; }
+
+       
 
         public List<runCaseSimpleModel> caseList { get; set; }
 

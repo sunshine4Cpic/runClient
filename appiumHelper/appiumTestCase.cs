@@ -35,8 +35,7 @@ namespace appiumHelper
         }
 
 
-        Thread DebugT;
-
+       
 
         //案例ID
         public string CaseID
@@ -112,26 +111,22 @@ namespace appiumHelper
 
             this.resultXml = new XElement(caseXml);//结果准备
 
-            try
-            {
-                init();
-            }catch{}
 
-            try
-            {
-                startRun(resultPath);
-            }
-            catch{}
+            init();
+
+
+
+            startRun(resultPath);
+
 
             try
             {
                 TestHelper.Driver.Quit();
             }
-            catch{
+            catch
+            {
+
             }
-
-
-
 
         }
 
@@ -189,26 +184,6 @@ namespace appiumHelper
         }
       
 
-        public override void Debug(string resultPath)
-        {
-            try
-            {
-                DebugT.Abort();
-            }
-            catch { }
-
-            try
-            {
-                TestHelper.Driver.Quit();
-            }
-            catch { }
-
-            DebugT = new Thread(() =>
-            {
-                run(resultPath);
-            });
-            DebugT.Start();
-            
-        }
+       
     }
 }

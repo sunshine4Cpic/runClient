@@ -1,23 +1,15 @@
-﻿
+﻿using System.Linq;
+using openCaseAPI;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using openCaseAPI;
 
 namespace testM_client
 {
@@ -33,8 +25,14 @@ namespace testM_client
         List<phoneDriver> pdl;//设备列表
 
 
+        Uri webAddress;
+
+        delegate void phoneSceneRun();
+
         public Form1()
         {
+
+            webAddress = new Uri(ConfigurationManager.AppSettings["webAddress"].ToString());
             IPAddress[] addressList = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
            
             foreach (IPAddress add in addressList)
@@ -48,16 +46,14 @@ namespace testM_client
 
             Console.OutputEncoding = Encoding.GetEncoding(936);
             
-            
-            Console.ForegroundColor = ConsoleColor.White;
             InitializeComponent();
            
-            //screenth = null;
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();
             this.listBox1.DataSource = pdl;
             this.listBox1.DisplayMember = "mark";
             this.listBox1.ValueMember = "device";
+
 
            
            
@@ -67,7 +63,7 @@ namespace testM_client
         private void button1_Click(object sender, EventArgs e)
         {
 
-            Uri webAddress = new Uri("http://localhost:20349");
+            
 
             runClient rc = new runClient(webAddress);
 
@@ -75,13 +71,19 @@ namespace testM_client
 
             var phone = this.listBox1.SelectedItem as phoneDriver;
 
+       
+
             rc.DebugEvent += phone.Debug;
+
+            rc.SceneEvent += this.runScene;
 
             foreach (var p in pdl)
             {
                 rc.registerDevice(p);
+
             }
 
+            this.listBox1.DataSource = null;
             this.listBox1.DataSource = pdl;
             this.listBox1.DisplayMember = "mark";
             this.listBox1.ValueMember = "device";
@@ -91,12 +93,27 @@ namespace testM_client
             rc.startService();
 
            
+        }
 
+        private void runScene(Object sender)
+        {
+            foreach (phoneDriver pd in pdl)
+            {
+                if (pd.status == phoneStatus.Idle)//设备是否空闲
+                {
+                    phoneSceneRun psr = new phoneSceneRun(pd.runScene);
+                    psr.BeginInvoke(new AsyncCallback(runCallBack), pd);
+                }
 
+            }
             
-           
-          
-           
+        }
+
+        private void runCallBack(IAsyncResult result)
+        {
+            (result.AsyncState as phoneDriver).status = phoneStatus.Idle;
+            //testRun sh = (testRun)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
+
         }
 
         
@@ -115,10 +132,8 @@ namespace testM_client
                 x = x.Substring(0, x.LastIndexOf("device"));
                 phoneDriver pd = new phoneDriver(x.Trim());
                 pd.IP = this.IP;
-                
                 pdl.Add(pd);
-                //this.listBox1.Items.Add(x.Trim());
-                //dList.Add(x.Trim());  
+              
             }  
 
             foreach(phoneDriver pd in pdl)
@@ -152,145 +167,6 @@ namespace testM_client
        
 
      
-
-        /// <summary>
-        /// 不只是执行场景,其实是激活设备进行执行
-        /// </summary>
-        /// <param name="pd"></param>
-        private void runScene(phoneDriver pd)
-        {
-        
-
-             testRunDataDataContext trddc = new testRunDataDataContext();
-
-            //属于这台手机并已经开始的场景
-            var Scene = trddc.M_runScene.Where(t => t.M_deviceConfig.device == pd.device && t.M_testDemand.isRun == true);
-
-            //有安装任务 或未执行案例>0
-            var rs = from t in Scene
-                     where (t.M_testDemand.apkName != null && t.installResult == null)
-                     || t.M_runTestCase.Where(c => c.state == null).Count() > 0
-                     select t;
-
-
-            
-            //遍历场景
-            while (rs.Count() > 0)
-            {
-                var r = rs.OrderBy(T=>T.ID).First();//取得第一个场景 *************以后改成时间排序
-
-                if(r.M_testDemand.apkName!=null && r.installResult==null)
-                {
-
-                    if (pd.caseHelper is appiumHelper.appiumTestCase)
-                    {
-                        //是appium 怎么安装?
-                    }
-                    else
-                    {
-                        Console.WriteLine(pd.device + "安装apk");
-
-                        string apkPath = ConfigurationManager.AppSettings["apkPath"].ToString() 
-                            + r.M_testDemand.apkName;
-
-                        string filePath = System.Environment.CurrentDirectory + "\\apkInstall\\" + pd.device + "\\";
-                        string rPath = filePath+ r.M_testDemand.apkName;
-                        if (!Directory.Exists(filePath))
-                        {
-                            Directory.CreateDirectory(filePath);
-                        }
-
-                        try
-                        {
-                            WebClient wClient = new WebClient();
-                            wClient.DownloadFile(apkPath, rPath);
-                            r.installResult = pd.install(rPath);
-                        }
-                        catch (Exception e)
-                        {
-                            r.installResult = "安装失败:" + e.Message;
-                        }
-                        
-                        //*********安装代码
-                        
-                        trddc.SubmitChanges();
-                    }
-                }
-                //执行场景
-                runSceneCase(pd, r.ID);
-                
-
-            }
-
-        }
-
-        /// <summary>
-        /// 手机执行某个场景
-        /// </summary>
-        /// <param name="pd">手机</param>
-        /// <param name="ID">场景ID</param>
-        private void runSceneCase(phoneDriver pd,int ID)
-        {
-            //if (pd.status == phoneStatus.Busy) return;
-            pd.status = phoneStatus.Busy;
-            string runPath = System.Environment.CurrentDirectory + "\\run\\";
-         
-            testRunDataDataContext trddc = new testRunDataDataContext();
-
-            //原执行逻辑
-            var ts = from t in trddc.M_runTestCase
-                     where t.M_runScene.M_testDemand.isRun == true && t.M_runScene.M_testDemand.visable ==null && t.sceneID == ID && t.state == null
-                     select t;
-
-            while (ts.Count() > 0)
-            {
-                M_runTestCase t = ts.First();
-                string runCasePath = runPath + t.ID + "\\";
-                DateTime sd = DateTime.Now;
-                pd.caseXml = t.testXML;
-                pd.resultXml = null;//置空
-                try
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(pd.device + "执行测试,ID: {0}......", t.ID);
-                    pd.run(runCasePath);
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                catch
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(pd.device + "执行测试失败,ID: {0}......", t.ID);
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-
-                t.endDate = DateTime.Now;
-                
-               
-
-                t.startDate = sd;
-
-                t.state = 1;
-
-                t.resultXML = pd.resultXml;
-                t.resultPath = "http://" + IP + "/" + t.ID + "/";
-                try
-                {
-
-                    trddc.SubmitChanges();
-                }
-                catch
-                {
-                    
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("案例"+t.ID+"更新失败!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    trddc.Refresh(RefreshMode.OverwriteCurrentValues,t);
-                    trddc.SubmitChanges();
-                }
-            }
-        }
-
-        
 
 
       
@@ -329,8 +205,6 @@ namespace testM_client
         }
 
         #endregion 关闭事件
-
-
 
 
     }

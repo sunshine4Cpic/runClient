@@ -16,8 +16,7 @@ namespace UiautomatorHelper
     {
         public string device { get; set; }
 
-        Thread debug;
-
+        
         private List<caseRun> lcr;
 
 
@@ -28,11 +27,12 @@ namespace UiautomatorHelper
         {
             //base.outputCaseXml(resultPath);//保存案例文件
             RunInit();
-            
-          
+
+            if (lcr.Count < 0) return;
+
             foreach (var c in lcr)
             {
-                ExeCommand("adb -s " + this.device + " shell uiautomator dump");
+                ExeCommand("adb", "-s " + this.device + " shell uiautomator dump");
 
                 c.run(resultPath);
 
@@ -41,7 +41,7 @@ namespace UiautomatorHelper
                 
             }
 
-            if (lcr.Count < 0) return;
+            
 
 
             resultXml = new XElement(lcr[0].resultXml);
@@ -59,26 +59,16 @@ namespace UiautomatorHelper
 
             string resultFilePath = base.outputResultXml(resultPath);//保存结果文件
 
-
-
-
         }
 
-        public override void Debug(string resultPath)
-        {
-            
-            
-
-            debug = new Thread(() => run(resultPath));
-            debug.Start();
-
-        }
 
         /// <summary>
         /// 将案例拆分
         /// </summary>
         private void RunInit()
         {
+            killUI();
+
             this.resultXml = null;
 
             List<XElement> caseList = new List<XElement>();
@@ -116,71 +106,37 @@ namespace UiautomatorHelper
             return caseT;
         }
 
-        private string ExeCommand(string commandText)
+        private string ExeCommand(string FileName, string Arguments)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = "cmd.exe";
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.LoadUserProfile = true;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.Arguments = string.Format(@"/c {0}", commandText);
+            using(Process p = new Process())
+            {
+                p.StartInfo.FileName = FileName;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.LoadUserProfile = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.Arguments = Arguments;
 
-            //string strOutput = p.StandardOutput.ReadToEnd();
 
+                p.Start();
 
-            p.Start();
-
-            p.WaitForExit();
-            string strOutput = p.StandardOutput.ReadToEnd();
-            p.Close();
-
-            return strOutput;
+                p.WaitForExit();
+                string strOutput = p.StandardOutput.ReadToEnd();
+                p.Close();
+                return strOutput;
+            }
+           
         }
 
-        public override void CloseAll()
-        {
-            
-
-            try
-            {
-                foreach (var s in lcr)
-                {
-                    s.CloseAll();
-                }
-                if (debug != null)
-                {
-                    debug.Abort();
-                }
-
-                killUI();
-            }
-            catch { }
-            
-            /*
-            if (DebugP == null) return;
-
-            try
-            {
-                if (!DebugP.HasExited)
-                {
-                    DebugP.CloseMainWindow();
-                    DebugP.Kill();
-                    DebugP.Close();
-                }
-            }
-            catch { }//什么都不做
-            */
-        }
 
         private void killUI()
         {
             //杀掉UI进程
-            string ss = ExeCommand("adb  -s " + this.device + " shell ps | findstr uiautomator");
+            string ss = ExeCommand("adb", "-s " + this.device + " shell ps | findstr uiautomator");
             var rex = Regex.Matches(ss, "[0-9]+");
             if (rex.Count > 0)
             {
-                ExeCommand("adb  -s " + this.device + " shell kill " + rex[0].Value);
+                ExeCommand("adb",  "-s " + this.device + " shell kill " + rex[0].Value);
             }
         }
     }

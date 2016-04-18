@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using BaseHelper;
 using System.Xml.XPath;
 using openCaseAPI;
+using System.Configuration;
 namespace testM_client
 {
     public class phoneDriver : registerDeviceModel
@@ -25,11 +26,8 @@ namespace testM_client
         /// <summary>
         /// 端口(chromeDriver用)
         /// </summary>
-        public int port
-        {
-            get;
-            set;
-        }
+        public int port { get; private set; }
+        
 
        
 
@@ -55,10 +53,7 @@ namespace testM_client
         
         public phoneDriver()
         {
-            //this.caseHelper = null;
-
             this.port = testHelper.FindFreePort();
-
         }
 
 
@@ -71,9 +66,7 @@ namespace testM_client
         public phoneDriver(string device)
             : this()
         {
-            //robotiumHelper.robotiumTestCase rt = new robotiumHelper.robotiumTestCase();
-            //rt.device = device;
-            //this.caseHelper = rt;
+          
             this.mark = device;
             this.device = device;
             
@@ -88,7 +81,7 @@ namespace testM_client
         /// <returns></returns>
         public void Debug(Object sender, runClient.DebugEventArgs e)
         {
-            
+            if (this.status == phoneStatus.Busy) return;
             //DEBUG 目录
             string rPath = System.Environment.CurrentDirectory + "\\runTemp\\" + this.device + "\\";
             this.debugPath = rPath;
@@ -99,7 +92,7 @@ namespace testM_client
             RunInit(rPath);
            
 
-            caseHelper.Debug(rPath);
+            caseHelper.run(rPath);
 
         }
 
@@ -157,7 +150,8 @@ namespace testM_client
             }
             else
             {
-               
+                if (caseHelper != null) caseHelper.CloseAll();
+             
                 XElement step =  caseXml.Descendants("Step").FirstOrDefault();
 
                 string name = "R_initStep";//随便赋值的
@@ -167,48 +161,32 @@ namespace testM_client
 
                 if(name.Contains("R_"))//robotium 初始化
                 {
-                    if (this.caseHelper != robotiumH)//清除前一种helper的对象缓存,避免执行影响
-                        caseHelper.CloseAll();
-
-                    if (robotiumH == null)
-                    {
-                        robotiumH = new robotiumHelper.robotiumTestCase();
-                    }
+                    
+                   
+                        caseHelper = new robotiumHelper.robotiumTestCase();
+                   
                         robotiumH.device = this.device;
                         robotiumH.caseXml = this.caseXml;
                         robotiumH.init();
-                  
-                    this.caseHelper = robotiumH;
                 }
                 else if (name.Contains("UI_"))//uiautomator 初始化
                 {
-                    if (this.caseHelper != UiautomatorH)//清除前一种helper的对象缓存,避免执行影响
-                        caseHelper.CloseAll();
-                    if (UiautomatorH == null)
-                    {
-                        UiautomatorH = new UiautomatorHelper.UiautomatorTestCase();
-                    }
+
+                    caseHelper = new UiautomatorHelper.UiautomatorTestCase();
+
                     UiautomatorH.device = this.device;
                     UiautomatorH.caseXml = this.caseXml;
-
-                    //DebugP
-                    this.caseHelper = UiautomatorH;
                 }
                 else //chrome 初始化
                 {
-                    // if (this.caseHelper != chromeH)//清除前一种helper的对象缓存,避免执行影响
-                    if (caseHelper != chromeH)
-                        caseHelper.CloseAll();
-                    if (chromeH == null)
-                    {
-                        chromeH = new chromeHelper.chromeTestCase(device, port);
-                    }
-                    //chromeH.device = this.device;
+
+                    caseHelper = new chromeHelper.chromeTestCase(device, port);
+
                     chromeH.caseXml = this.caseXml;
-                   
+
                     this.caseHelper = chromeH;
                 }
-
+                
             }
         }
 
@@ -226,34 +204,43 @@ namespace testM_client
        /// </summary>
         public void runScene()
         {
+
+            var Scene = testHelper.rc.GetRunScene(this.device);
+
+            if (string.IsNullOrEmpty(Scene.installApk) && string.IsNullOrEmpty(Scene.installResult))//安装任务未完成,先进行安装
+            {
+
+                string filePath = System.Environment.CurrentDirectory + "\\apkInstall\\" + this.device + "\\";
+
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+
+                testHelper.rc.downApk(Scene.installApk, filePath);
+                Scene.installResult = this.install(filePath);
+                //***************此处上传安装结果******************//
+                throw new NotImplementedException();
+            }
+
+            foreach (var rcm in Scene.caseList)
+            {
+                runCase(rcm);
+            }
+
             
+
+
+        }
+
+
+        private void runCase(runCaseSimpleModel rcm)
+        {
+
 
         }
 
         
-
-        /// <summary>
-        /// 停止工作
-        /// </summary>
-        public void rest()
-        {
-           
-            
-        }
-
-        private void startRunScene()
-        {
-            //执行场景
-            Thread.Sleep(10000);
-        }
-
-        private void runCallBack(IAsyncResult result)
-        {
-            this.status = phoneStatus.Idle;
-        }
-
-
-      
 
 
     }

@@ -20,28 +20,32 @@ namespace robotiumHelper
 
         public bool? isClear { get; set; }
 
-        private Process DebugP;
+        private Process runProcess;
 
         public override void run(string resultPath)
         {
             string casePath = base.outputCaseXml(resultPath);//保存案例文件
             string apkPath = "RunApk\\" + RunApk;
             this.resultXml = null;
-            using (Process p = new Process())
-            {
-                string batName = "RobotiumRunScript.bat";
-                if (isClear == true)
-                    batName = "RobotiumRunScript2.bat";
-                p.StartInfo.FileName = "cmd.exe";
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = false;
-                p.StartInfo.Arguments = string.Format(@"/c {0}\{6} {1} {2} {3} {4} {5}",
-                    System.Environment.CurrentDirectory, casePath, resultPath, device, apkPath, package, batName);
-                p.Start();
-                p.WaitForExit();
-                p.Close();
 
-            }
+
+            runProcess = new Process();
+            string batName = "RobotiumRunScript.bat";
+            if (isClear == true)
+                batName = "RobotiumRunScript2.bat";
+
+
+            runProcess.StartInfo.FileName = System.Environment.CurrentDirectory + "/" + batName;
+            runProcess.StartInfo.UseShellExecute = false;
+            runProcess.StartInfo.CreateNoWindow = true;
+
+            runProcess.StartInfo.Arguments = string.Format("{0} {1} {2} {3} {4}",
+                casePath, resultPath, device, apkPath, package);
+            runProcess.Start();
+            runProcess.WaitForExit();
+            runProcess.Close();
+
+
             //案例结果保存路径
             string resultFilePath = base.outputResultXml(resultPath);
 
@@ -53,56 +57,23 @@ namespace robotiumHelper
         }
 
 
-        public override void Debug(string resultPath)
-        {
-            string casePath = base.outputCaseXml(resultPath);//保存案例文件
-            string apkPath = "RunApk\\" + RunApk;
-            this.resultXml = null;
 
-            DebugPInit();
-
-            DebugP = new Process();
-
-            string batName = "RobotiumRunScript4debug.bat";
-            if (isClear == true)
-                batName = "RobotiumRunScript24debug.bat";
-
-            DebugP.StartInfo.FileName = "cmd.exe";
-            DebugP.StartInfo.UseShellExecute = false;
-            DebugP.StartInfo.CreateNoWindow = false;
-            DebugP.StartInfo.Arguments = string.Format(@"/c {0}\{6} {1} {2} {3} {4} {5}",
-                System.Environment.CurrentDirectory, casePath, resultPath, device, apkPath, package, batName);
-            DebugP.Start();
-            //DebugP.WaitForExit();
-
-            //案例结果保存路径
-
-        }
-
-        /// <summary>
-        /// 初始化DEBUG进程
-        /// </summary>
-        private void DebugPInit()
-        {
-            if (DebugP == null) return;
-
-            try
-            {
-                if (!DebugP.HasExited)
-                {
-                    
-                    DebugP.CloseMainWindow();
-                    DebugP.Kill();
-                    DebugP.Close();
-                }
-            }
-            catch { }//什么都不做
-
-        }
 
         public override void CloseAll()
         {
-            DebugPInit();
+            if(runProcess!=null && !runProcess.HasExited)
+            {
+                try
+                {
+                    runProcess.Kill();
+                    runProcess.Close();
+                }
+                catch (Exception e)
+                {
+                    
+                    
+                }
+            }
         }
 
 

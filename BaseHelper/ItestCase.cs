@@ -25,11 +25,6 @@ namespace BaseHelper
         /// <param name="resultPath"></param>
         void run(string resultPath);
 
-        /// <summary>
-        /// 调试案例
-        /// </summary>
-        /// <param name="resultPath"></param>
-        void Debug(string resultPath);
 
 
         /// <summary>

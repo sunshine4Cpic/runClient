@@ -162,38 +162,17 @@ namespace chromeHelper
             
         }
 
-        public override void Debug(string resultPath)
-        {
-            try
-            {
-                DebugT.Abort();
-            }
-            catch { }
-
-           
-
-            DebugT = new Thread(() =>
-            {
-                run(resultPath);
-            });
-            DebugT.Start();
-
-          
-
-        }
-
-
+     
         public override void CloseAll()
         {
+            //要不干脆 kill
             try
             {
-                if (th.ch != null)
-                {
-                    th.ch.Quit();
-                    th.ch = null;
-                }
+
+                th.ch.Quit();
+
             }
-            catch { th.ch = null; }
+            catch { }
         }
 
     }

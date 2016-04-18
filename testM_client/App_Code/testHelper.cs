@@ -15,7 +15,7 @@ namespace testM_client
     public class testHelper
     {
 
-        public static List<M_application> mapps;
+       
 
         public static runClient rc{get;set;}
 
@@ -24,16 +24,7 @@ namespace testM_client
         static testHelper()
         {
             port = 4800;
-            try
-            {
-               testRunDataDataContext trddc = new testRunDataDataContext();
-                mapps = trddc.M_application.ToList();
-            }
-            catch
-            {
-
-                Console.WriteLine("M_application初始化失败");
-            }
+           
         }
        
 
@@ -59,13 +50,47 @@ namespace testM_client
             return strOutput;
         }
 
+
+        public static string Command(string FileName, string Arguments, int WaitTime = 600000)
+        {
+            using( Process p = new Process())
+            {
+                p.StartInfo.FileName = FileName;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.LoadUserProfile = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.Arguments = Arguments;
+
+                var StandardOutput = p.StandardOutput;
+
+                string strOutput = "";
+
+                try
+                {
+                    p.Start();
+                    p.WaitForExit(WaitTime);
+                    if (!p.HasExited) p.Kill();
+                    strOutput = StandardOutput.ReadToEnd();
+                    p.Close();
+                }
+                catch (Exception e)
+                {
+
+                    logHelper.error(e.StackTrace);
+                }
+                return strOutput;
+            }
+           
+        }
+
        
 
         /// <summary>
-        /// 获取可用端口
+        /// 端口是否占用
         /// </summary>
         /// <returns></returns>
-        public static bool PortInUse(int port)
+        private static bool PortInUse(int port)
         {
             // Locate a free port on the local machine by binding a socket to
             // an IPEndPoint using IPAddress.Any and port 0. The socket will
@@ -103,7 +128,8 @@ namespace testM_client
                     return tmpPort;
                 }
                 
-            } while (++port<6000);
+            } while (++port<20000);
+            logHelper.error("FindFreePort无可用端口");
             throw new Exception("无可用端口");
             //return 0;
         }
@@ -156,30 +182,19 @@ namespace testM_client
 
         public static void init(this appiumHelper.appiumTestCase _tc)
         {
-            //appium 需求少暂时先不改
-            //testRunDataDataContext trddc = new testRunDataDataContext();
-
 
             var appID = _tc.caseXml.XPathSelectElement("//ParamBinding[@name='applicationID']");
-            if (appID != null)
-            {
-                int ID = Convert.ToInt32(appID.Attribute("value").Value);
-                var app = testHelper.mapps.Where(t => t.ID == ID).FirstOrDefault();
-                if (app != null)
-                {
-                    _tc.app = app.package2;
-                }
-                else
-                {
-                    var f = testHelper.mapps.First();
-                    _tc.app = f.package2;
-                }
-            }
-            else
-            {
-                var f = testHelper.mapps.First();
-                _tc.app = f.package2;
-            }
+
+            string ID = appID.Attribute("value").Value;
+
+            if (string.IsNullOrEmpty(ID))
+                ID = "null";
+
+
+            var app = testHelper.rc.GetApk(ID);
+            _tc.app = app.iosPackage;
+
+
 
 
         }

@@ -21,14 +21,11 @@ namespace BaseHelper
            
         }
 
-        public virtual void Debug(string resultPath)
-        {
 
-        }
      
 
         /// <summary>
-        /// 输出结果
+        /// 输出结果到文件
         /// </summary>
         /// <param name="resultPath"></param>
         public string outputResultXml(string Path)
@@ -39,7 +36,7 @@ namespace BaseHelper
             }
 
             string filePath = Path + "test_result.xml";
-            if(resultXml!=null)
+            if(resultXml!=null)//如果有结果保存成文件
             {
                 resultXml.Save(filePath);
             }
@@ -48,7 +45,7 @@ namespace BaseHelper
         }
 
         /// <summary>
-        /// 输出案例
+        /// 输出案例到文件
         /// </summary>
         /// <param name="resultPath"></param>
         public string outputCaseXml(string Path)

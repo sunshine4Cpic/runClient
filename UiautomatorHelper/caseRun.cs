@@ -24,9 +24,9 @@ namespace UiautomatorHelper
         public string device { get; set; }
 
 
-        private Process DebugP;
 
-        public bool runOK;
+
+        public bool runOK { get; private set; }
 
         public override void run(string resultPath)
         {
@@ -55,15 +55,6 @@ namespace UiautomatorHelper
         }
 
 
-        public override void Debug(string resultPath)
-        {
-
-            //DebugP = newProcess(resultPath);
-
-            //DebugP.Start();
-
-
-        }
 
         /// <summary>
         /// 执行准备
@@ -119,30 +110,6 @@ namespace UiautomatorHelper
             return strOutput;
         }
 
-        public override void CloseAll()
-        {
-            /*
-            string ss = ExeCommand("adb shell ps | findstr uiautomator");
-            var rex = Regex.Matches(ss, "[0-9]+");
-            if (rex.Count > 0)
-            {
-                ExeCommand("adb shell kill " + rex[0].Value);
-            }*/
-
-            if (DebugP == null) return;
-
-            try
-            {
-                if (!DebugP.HasExited)
-                {
-                    DebugP.CloseMainWindow();
-                    DebugP.Kill();
-                    DebugP.Close();
-                }
-            }
-            catch { }//什么都不做
-
-        }
 
     }
 }

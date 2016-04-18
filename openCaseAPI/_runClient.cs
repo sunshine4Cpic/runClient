@@ -13,16 +13,23 @@ namespace openCaseAPI
     {
         
 
-
-        //声明DEBUG委托  
+        
+       
         public delegate void DebugEventHandler(Object sender, DebugEventArgs e);
 
+
+        /// <summary>
+        /// 注册debug事件(异步),debug调用开始后将立刻反馈给平台信息.
+        /// </summary>
         public event DebugEventHandler DebugEvent; //声明DEBUG事件  
 
 
         //声明Scene委托  
         public delegate void SceneEventHandler(Object sender);
 
+        /// <summary>
+        /// 注册Scene事件(同步),Scene事件在开始后不会立刻反馈给平台.(调用全部结束后,会反馈给平台调用信息--未实现)
+        /// </summary>
         public event SceneEventHandler SceneEvent; //声明Scene事件  
 
 
@@ -37,10 +44,13 @@ namespace openCaseAPI
         }
 
 
+
+
       
 
         protected void OnDebug(DebugEventArgs e)
         {
+        
             if (DebugEvent != null)
             { // 如果有对象注册  
                 foreach (DebugEventHandler de in DebugEvent.GetInvocationList())
@@ -50,17 +60,16 @@ namespace openCaseAPI
                
             }
 
-           
-            
-          
         }
 
         protected void OnScene()
         {
+            
             if (SceneEvent != null)
             { // 如果有对象注册  
-                SceneEvent.BeginInvoke(this, null, null);
+                SceneEvent(this);
             }
+
         }
 
 
