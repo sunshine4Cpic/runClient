@@ -133,7 +133,7 @@ namespace testM_client
                     try { file.Delete(); }
                     catch (Exception e)
                     {
-                        logHelper.error("删除文件失败," + e.Message);
+                        logHelper.error(e);
                     }
                 }
             }
@@ -222,7 +222,7 @@ namespace testM_client
                     }
                     catch (Exception e)
                     {
-                        logHelper.error(e.StackTrace);
+                        logHelper.error(e);
                     }
                 }
             }
@@ -281,7 +281,7 @@ namespace testM_client
                 }
                 catch (Exception e)
                 {
-                    logHelper.error(e.StackTrace);
+                    logHelper.error(e);
                 }
             }
 

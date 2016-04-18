@@ -77,7 +77,7 @@ namespace testM_client
                 catch (Exception e)
                 {
 
-                    logHelper.error(e.StackTrace);
+                    logHelper.error(e);
                 }
                 return strOutput;
             }

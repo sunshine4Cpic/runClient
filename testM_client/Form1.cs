@@ -31,7 +31,6 @@ namespace testM_client
 
         public Form1()
         {
-
             webAddress = new Uri(ConfigurationManager.AppSettings["webAddress"].ToString());
             IPAddress[] addressList = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
            
@@ -48,8 +47,7 @@ namespace testM_client
             
             InitializeComponent();
 
-            //demo
-            LogHelper.WriteLog(typeof(Form1), "测试Log4Net已经写入");
+            
            
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();

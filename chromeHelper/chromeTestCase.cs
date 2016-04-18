@@ -36,7 +36,7 @@ namespace chromeHelper
         }
         //案例列表
 
-        Thread DebugT;
+
        
         internal List<TestStep> StepList
         {

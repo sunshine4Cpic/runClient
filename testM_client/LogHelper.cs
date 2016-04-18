@@ -13,9 +13,9 @@ namespace   testM_client
     {
         #region static void WriteLog(Type t, Exception ex)
 
-        public static void WriteLog(Type t, Exception ex)
+        public static void WriteLog(Exception ex)
         {
-            log4net.ILog log = log4net.LogManager.GetLogger(t);
+            log4net.ILog log = log4net.LogManager.GetLogger("");
             log.Error("Error", ex);
         }
 
