@@ -201,7 +201,7 @@ namespace testM_client
 
             var Scene = testHelper.rc.GetRunScene(this.device);
 
-            if (string.IsNullOrEmpty(Scene.installApk) && string.IsNullOrEmpty(Scene.installResult))//安装任务未完成,先进行安装
+            if (!string.IsNullOrEmpty(Scene.installApk) && string.IsNullOrEmpty(Scene.installResult))//安装任务未完成,先进行安装
             {
 
                 string filePath = System.Environment.CurrentDirectory + "\\apkInstall\\" + this.device + "\\";
@@ -210,20 +210,21 @@ namespace testM_client
                 {
                     Directory.CreateDirectory(filePath);
                 }
+                if (testHelper.rc.downApk(Scene.installApk, filePath))
+                {
 
-                testHelper.rc.downApk(Scene.installApk, filePath);
-                Scene.installResult = this.install(filePath);
-                //***************此处上传安装结果******************//
-                SceneInstallResult_req req = new SceneInstallResult_req();
-                try
-                {
-                    testHelper.rc.SceneInstallResult(req);
+                    Scene.installResult = this.install(filePath);
+                    //***************此处上传安装结果******************//
+                    SceneInstallResult_req req = new SceneInstallResult_req();
+                    try
+                    {
+                        testHelper.rc.SceneInstallResult(req);
+                    }
+                    catch (Exception e)
+                    {
+                        logHelper.error(e.StackTrace);
+                    }
                 }
-                catch (Exception e)
-                {
-                    logHelper.error(e.StackTrace);
-                }
-                
             }
 
             foreach (var rcm in Scene.caseList)
