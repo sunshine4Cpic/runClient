@@ -101,6 +101,7 @@ namespace testM_client
             {
                 if (pd.status == phoneStatus.Idle)//设备是否空闲
                 {
+                    pd.status = phoneStatus.Busy;
                     phoneSceneRun psr = new phoneSceneRun(pd.runScene);
                     psr.BeginInvoke(new AsyncCallback(runCallBack), pd);
                 }

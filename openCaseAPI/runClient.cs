@@ -27,110 +27,83 @@ namespace openCaseAPI
         /// <param name="Req"></param>
         public void registerDevice(registerDeviceModel Req)
         {
-            try
-            {
-                //请求路径
-                Uri apiUri = new Uri(webAddress, "api/runClient/registerDevice");
 
-                //传递body
-                string body = JsonConvert.SerializeObject(Req);
-                //返回流
-                var reader = Postself(apiUri, body);
-                //流转字符串
-                string mark_repo = reader.ReadToEnd();
+            //请求路径
+            Uri apiUri = new Uri(webAddress, "api/runClient/registerDevice");
+
+            //传递body
+            string body = JsonConvert.SerializeObject(Req);
+            //返回流
+            var reader = Postself(apiUri, body);
+            //流转字符串
+            string mark_repo = reader.ReadToEnd();
 
 
-                Req.mark = mark_repo;
+            Req.mark = mark_repo;
 
-            }
-            catch (Exception)
-            {
-                throw new Exception("error");
-            }
+
         }
 
         public AutoRunSceneModel GetRunScene(string device)
         {
-            try
-            {
-                Uri apiUri = new Uri(webAddress, "api/runClient/AutoRunScene?device=" + device);
+
+            Uri apiUri = new Uri(webAddress, "api/runClient/AutoRunScene?device=" + device);
 
 
-                var reader = Getself(apiUri);
-                string reposer = reader.ReadToEnd().ToString();
-                AutoRunSceneModel RunModel = JsonConvert.DeserializeObject<AutoRunSceneModel>(reposer);
+            var reader = Getself(apiUri);
+            string reposer = reader.ReadToEnd().ToString();
+            AutoRunSceneModel RunModel = JsonConvert.DeserializeObject<AutoRunSceneModel>(reposer);
 
-                return RunModel;
-            }
+            return RunModel;
 
-            catch (Exception)
-            {
-
-
-                return null;
-
-            }
         }
 
         public XElement GetSceneCase(int id)
         {
-            try
-            {
+            
                 Uri apiUri = new Uri(webAddress, "api/runClient/RunScript/" + id);
                 var reader = Getself(apiUri);
                 string reposer = reader.ReadToEnd();
                 XElement Testxml = XElement.Parse(reposer);
-                //return testxml;
+              
                 return Testxml;
-            }
-
-            catch (Exception)
-            {
-                return null;
-
-            }
+           
         }
 
-        public void caseResult(caseResult_req caseresult, int ID)
+        public string caseResult(caseResult_req req)
         {
 
-            try
-            {
-                Uri apiUri = new Uri(webAddress, "api/runClient/caseResult/" + ID);
-                string body = JsonConvert.SerializeObject(caseresult);
-                var reader = Postself(apiUri, body);
+
+            Uri apiUri = new Uri(webAddress, "api/runClient/caseResult");
+            string body = JsonConvert.SerializeObject(req);
+            var reader = Postself(apiUri, body);
+
+            return reader.ReadToEnd();
 
 
-                Console.WriteLine(reader.ReadToEnd());
-            }
-            catch (Exception)
-            {
+        }
 
-            }
+        public string SceneInstallResult(SceneInstallResult_req req)
+        {
 
 
+            Uri apiUri = new Uri(webAddress, "api/runClient/SceneInstallResult");
+            string body = JsonConvert.SerializeObject(req);
+            var reader = Postself(apiUri, body);
 
+            return reader.ReadToEnd();
         }
 
         public application_res GetApk(string appID)
         {
-            try
-            {
-
-                Uri apiUri = new Uri(webAddress, "api/runClient/application/" + appID);
-                var reader = Getself(apiUri);
-
-                application_res res = JsonConvert.DeserializeObject<application_res>(reader.ReadToEnd());
-
-                return res;
 
 
-            }
-            catch (Exception)
-            {
+            Uri apiUri = new Uri(webAddress, "api/runClient/application/" + appID);
+            var reader = Getself(apiUri);
 
-                return null;
-            }
+            application_res res = JsonConvert.DeserializeObject<application_res>(reader.ReadToEnd());
+
+            return res;
         }
 
         public bool downApk(string apkName, string fileName)

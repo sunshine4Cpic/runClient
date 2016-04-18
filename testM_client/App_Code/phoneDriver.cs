@@ -34,11 +34,7 @@ namespace testM_client
         public ItestCase caseHelper;
 
 
-        private robotiumHelper.robotiumTestCase robotiumH;
-
-        private UiautomatorHelper.UiautomatorTestCase UiautomatorH;
-
-        private chromeHelper.chromeTestCase chromeH;
+      
 
         public phoneStatus status { set; get; }
 
@@ -157,34 +153,32 @@ namespace testM_client
                 string name = "R_initStep";//随便赋值的
                 if(step!=null)
                     name = step.Attribute("name").Value;
-                
 
-                if(name.Contains("R_"))//robotium 初始化
+
+                if (name.Contains("R_"))//robotium 初始化
                 {
-                    
-                   
-                        caseHelper = new robotiumHelper.robotiumTestCase();
-                   
-                        robotiumH.device = this.device;
-                        robotiumH.caseXml = this.caseXml;
-                        robotiumH.init();
+
+                    var help = new robotiumHelper.robotiumTestCase();
+                    caseHelper = help;
+
+                    help.device = this.device;
+                    help.caseXml = this.caseXml;
+                    help.init();
                 }
                 else if (name.Contains("UI_"))//uiautomator 初始化
                 {
+                    var help = new UiautomatorHelper.UiautomatorTestCase();
+                    caseHelper = help;
 
-                    caseHelper = new UiautomatorHelper.UiautomatorTestCase();
-
-                    UiautomatorH.device = this.device;
-                    UiautomatorH.caseXml = this.caseXml;
+                    help.device = this.device;
+                    help.caseXml = this.caseXml;
                 }
                 else //chrome 初始化
                 {
+                    var help = new chromeHelper.chromeTestCase(device, port);
+                    caseHelper = help;
 
-                    caseHelper = new chromeHelper.chromeTestCase(device, port);
-
-                    chromeH.caseXml = this.caseXml;
-
-                    this.caseHelper = chromeH;
+                    help.caseXml = this.caseXml;
                 }
                 
             }
@@ -220,24 +214,79 @@ namespace testM_client
                 testHelper.rc.downApk(Scene.installApk, filePath);
                 Scene.installResult = this.install(filePath);
                 //***************此处上传安装结果******************//
-                throw new NotImplementedException();
+                SceneInstallResult_req req = new SceneInstallResult_req();
+                try
+                {
+                    testHelper.rc.SceneInstallResult(req);
+                }
+                catch (Exception e)
+                {
+                    logHelper.error(e.StackTrace);
+                }
+                
             }
 
             foreach (var rcm in Scene.caseList)
             {
-                runCase(rcm);
+                runCase(rcm.id);
             }
-
-            
-
 
         }
 
 
-        private void runCase(runCaseSimpleModel rcm)
+        private void runCase(int ID)
         {
+            caseResult_req req = new caseResult_req();
+            req.ID = ID;
+
+            string runPath = System.Environment.CurrentDirectory + "/run/";
 
 
+            XElement caseXml = testHelper.rc.GetSceneCase(ID);
+
+
+            string runCasePath = runPath + ID + "/";
+            
+            this.caseXml = caseXml;
+            this.resultXml = null;//置空
+
+            req.startDate = DateTime.Now;
+            try
+            {
+                logHelper.info(string.Format("{0}执行测试,ID:{1}", device, ID));
+
+                this.run(runCasePath);
+
+            }
+            catch
+            {
+                logHelper.info(string.Format("{0}执行测试失败,ID:{1}", device, ID));
+            }
+
+            req.endDate = DateTime.Now;
+
+
+            req.state = 1;
+
+            req.resultXML = this.resultXml.ToString();
+            req.resultPath = "http://" + IP + "/" + ID + "/";
+            int i;
+            for (i = 0; i < 3; i++)
+            {
+                try
+                {
+                    testHelper.rc.caseResult(req);
+                    return;
+                }
+                catch (Exception e)
+                {
+                    logHelper.error(e.StackTrace);
+                }
+            }
+
+           
+             throw new Exception("上传平台失败");
+            
         }
 
         

@@ -39,13 +39,23 @@ namespace openCaseAPI
 
     public class caseResult_req
     {
-        public XElement resultXML { set; get; }
+        public int ID { get; set; }
+        public string resultXML { set; get; }
         public DateTime startDate { set; get; }
         public DateTime endDate { set; get; }
         public int state { set; get; }
         public string resultPath { set; get; }
 
     }
+    public class SceneInstallResult_req
+    {
+        
+        public int ID { get; set; }
+
+      
+        public string installResult { get; set; }
+    }
+
 
     public class AutoRunSceneModel
     {
