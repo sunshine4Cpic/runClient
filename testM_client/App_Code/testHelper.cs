@@ -154,18 +154,17 @@ namespace testM_client
 
 
 
+            string ID = "null";
 
+            var appXE = _tc.caseXml.XPathSelectElement("//R_InitStep/ParamBinding[@name='applicationID']");
+            if (appXE != null)
+            {
+                ID = appXE.Attribute("value").Value; 
+                if (string.IsNullOrEmpty(ID))
+                    ID = "null";
+            }
 
-            var appID = _tc.caseXml.XPathSelectElement("//ParamBinding[@name='applicationID']");
-
-            string ID = appID.Attribute("value").Value;
-
-            if (string.IsNullOrEmpty(ID))
-                ID = "null";
-
-            
-
-
+          
 
             var app = testHelper.rc.GetApk(ID);
 

@@ -15,13 +15,10 @@ using openCaseAPI;
 using System.Configuration;
 namespace testM_client
 {
-    public class phoneDriver : registerDeviceModel
+    public class phoneDriver : phoneAbs
     {
 
       
-
-       
-        
 
         /// <summary>
         /// 端口(chromeDriver用)
@@ -33,7 +30,9 @@ namespace testM_client
 
         public ItestCase caseHelper;
 
-
+        public string listBoxText { get{
+            return string.Format("{0}({1})", mark, device);
+        }}
       
 
         public phoneStatus status { set; get; }
@@ -75,8 +74,9 @@ namespace testM_client
         /// Debug执行
         /// </summary>
         /// <returns></returns>
-        public void Debug(Object sender, runClient.DebugEventArgs e)
+        public override void Debug(Object sender, runClient.DebugEventArgs e)
         {
+            
             if (this.status == phoneStatus.Busy) return;
             //DEBUG 目录
             string rPath = System.Environment.CurrentDirectory + "\\runTemp\\" + this.device + "\\";

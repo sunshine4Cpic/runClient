@@ -25,7 +25,7 @@ namespace openCaseAPI
         /// 注册执行设备
         /// </summary>
         /// <param name="Req"></param>
-        public void registerDevice(registerDeviceModel Req)
+        public void registerDevice(phoneAbs Req)
         {
 
             //请求路径

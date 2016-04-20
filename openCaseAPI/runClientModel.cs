@@ -11,7 +11,7 @@ namespace openCaseAPI
 {
 
     [DataContract]
-    public class registerDeviceModel
+    public abstract class phoneAbs
     {
         [DataMember]
         public string device { set; get; }
@@ -25,6 +25,8 @@ namespace openCaseAPI
         [DataMember]
         public string mark { set; get; }
 
+        public abstract void Debug(Object sender, runClient.DebugEventArgs e);
+        
     }
     public class application_res
     {

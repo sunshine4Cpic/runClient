@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace testM_client
 {
@@ -28,6 +30,8 @@ namespace testM_client
         Uri webAddress;
 
         delegate void phoneSceneRun();
+
+        delegate void phoneDebugResult();
 
         public Form1()
         {
@@ -52,7 +56,7 @@ namespace testM_client
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();
             this.listBox1.DataSource = pdl;
-            this.listBox1.DisplayMember = "mark";
+            this.listBox1.DisplayMember = "listBoxText";
             this.listBox1.ValueMember = "device";
 
 
@@ -64,8 +68,8 @@ namespace testM_client
         private void button1_Click(object sender, EventArgs e)
         {
 
-            
 
+        
             runClient rc = new runClient(webAddress);
 
             testHelper.rc = rc;
@@ -76,7 +80,7 @@ namespace testM_client
 
             rc.DebugEvent += phone.Debug;
 
-            rc.SceneEvent += this.runScene;
+            rc.SceneEvent += runScene;
 
             foreach (var p in pdl)
             {
@@ -86,13 +90,15 @@ namespace testM_client
 
             this.listBox1.DataSource = null;
             this.listBox1.DataSource = pdl;
-            this.listBox1.DisplayMember = "mark";
+            this.listBox1.DisplayMember = "listBoxText";
             this.listBox1.ValueMember = "device";
 
             (sender as Button).Enabled = false;
+            this.listBox1.Enabled = false;
 
             rc.startService();
 
+            
            
         }
 
@@ -114,7 +120,6 @@ namespace testM_client
         private void runCallBack(IAsyncResult result)
         {
             (result.AsyncState as phoneDriver).status = phoneStatus.Idle;
-            //testRun sh = (testRun)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
 
         }
 
@@ -164,14 +169,66 @@ namespace testM_client
             return pdl;
         }
 
-        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var DdbugPD = this.listBox1.SelectedItem as phoneDriver;
+            try
+            {
+                this.treeView1.Nodes.Clear();
 
-       
-
-     
+                XElement ResultX = XElement.Load(DdbugPD.debugPath + "test_result.xml");
 
 
-      
+                var steps = ResultX.Descendants("Step").ToList();
+
+
+
+
+                foreach (var step in steps)
+                {
+                    TreeNode tn = new TreeNode();
+                    if (step.Attribute("desc") != null)
+                        tn.Text = step.Name + ":" + step.Attribute("desc").Value;
+                    else
+                        tn.Text = step.Name.ToString();
+                    if (step.Attribute("Photo") != null)
+                        tn.Name = DdbugPD.debugPath + step.Attribute("Photo").Value;
+
+                    if (step.Attribute("ResultStatic") != null)
+                    {
+                        string ResultStatic = step.Attribute("ResultStatic").Value;
+                        if (ResultStatic == "1")
+                        {
+                            tn.ForeColor = Color.Blue;
+                        }
+                        else
+                            tn.ForeColor = Color.Red;
+                    }
+
+
+                    var pbs = step.DescendantNodes();
+
+                    //string[] arrstr = step.
+                    foreach (var pb in pbs)
+                    {
+                        tn.Nodes.Add(new TreeNode(pb.ToString()));
+                    }
+
+                    this.treeView1.Nodes.Add(tn);
+
+                }
+            }
+            catch { }
+        }
+
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (treeView1.SelectedNode == null) return;
+            if (treeView1.SelectedNode.Name != "" && File.Exists(treeView1.SelectedNode.Name))
+            {
+                Process.Start(treeView1.SelectedNode.Name);
+            }
+        }
 
 
 
@@ -207,6 +264,8 @@ namespace testM_client
         }
 
         #endregion 关闭事件
+
+       
 
 
     }

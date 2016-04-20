@@ -37,6 +37,8 @@ namespace openCaseAPI
         public class DebugEventArgs : EventArgs
         {
             public readonly XElement caseXml;//  
+
+            
             public DebugEventArgs(XElement caseXml)
             {
                 this.caseXml = caseXml;
@@ -50,16 +52,21 @@ namespace openCaseAPI
 
         protected void OnDebug(DebugEventArgs e)
         {
-        
+            
             if (DebugEvent != null)
             { // 如果有对象注册  
                 foreach (DebugEventHandler de in DebugEvent.GetInvocationList())
                 {
-                    de.BeginInvoke(this, e, null, null);
+                    Console.WriteLine("DebugEvent begin...");
+                    de.BeginInvoke(this, e, new AsyncCallback(DebugCallBack), de);
                 }
-               
             }
 
+        }
+
+        private void DebugCallBack(IAsyncResult result)
+        {
+            Console.WriteLine("DebugEvent end...");
         }
 
         protected void OnScene()
@@ -71,6 +78,8 @@ namespace openCaseAPI
             }
 
         }
+
+        
 
 
         public void startService()

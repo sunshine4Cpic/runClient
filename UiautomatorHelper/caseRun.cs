@@ -36,6 +36,17 @@ namespace UiautomatorHelper
             {
                 p.Start();
                 p.WaitForExit();
+
+                var result = p.StandardOutput.ReadToEnd();
+                Console.WriteLine(result);
+
+                using (FileStream fs = new FileStream(resultPath + "log.txt", FileMode.OpenOrCreate))
+                {
+                    StreamWriter sw = new StreamWriter(fs);
+                    sw.Write(result);
+                    sw.Close();
+                }
+
                 p.Close();
             }
             //案例结果保存路径

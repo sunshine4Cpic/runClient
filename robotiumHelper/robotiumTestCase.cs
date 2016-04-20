@@ -20,16 +20,17 @@ namespace robotiumHelper
 
         public bool? isClear { get; set; }
 
-        private Process runProcess;
+        
 
         public override void run(string resultPath)
         {
+         
             string casePath = base.outputCaseXml(resultPath);//保存案例文件
             string apkPath = "RunApk\\" + RunApk;
             this.resultXml = null;
 
 
-            runProcess = new Process();
+            Process runProcess = new Process();
             string batName = "RobotiumRunScript.bat";
             if (isClear == true)
                 batName = "RobotiumRunScript2.bat";
@@ -37,14 +38,31 @@ namespace robotiumHelper
 
             runProcess.StartInfo.FileName = System.Environment.CurrentDirectory + "/" + batName;
             runProcess.StartInfo.UseShellExecute = false;
+            runProcess.StartInfo.LoadUserProfile = true;
             runProcess.StartInfo.CreateNoWindow = true;
+            runProcess.StartInfo.RedirectStandardOutput = true;
 
             runProcess.StartInfo.Arguments = string.Format("{0} {1} {2} {3} {4}",
                 casePath, resultPath, device, apkPath, package);
             runProcess.Start();
             runProcess.WaitForExit();
+
+            var result = runProcess.StandardOutput.ReadToEnd();
+            Console.WriteLine(result);
+
+            using (FileStream fs = new FileStream(resultPath+"log.txt", FileMode.OpenOrCreate))
+            {
+                StreamWriter sw = new StreamWriter(fs);
+                sw.Write(result);
+                sw.Close();
+
+            }
+            
+
             runProcess.Close();
 
+            
+           
 
             //案例结果保存路径
             string resultFilePath = base.outputResultXml(resultPath);
@@ -61,19 +79,8 @@ namespace robotiumHelper
 
         public override void CloseAll()
         {
-            if(runProcess!=null && !runProcess.HasExited)
-            {
-                try
-                {
-                    runProcess.Kill();
-                    runProcess.Close();
-                }
-                catch (Exception e)
-                {
-                    
-                    
-                }
-            }
+           
+            
         }
 
 

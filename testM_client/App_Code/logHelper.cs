@@ -11,7 +11,7 @@ namespace testM_client
         public static void error(Exception ex)
         {
             log4net.ILog log = log4net.LogManager.GetLogger("");
-            log.Error("Error", ex);
+            log.Error(null, ex);
             Console.WriteLine("*** error:" + ex.StackTrace + " ***");
         }
 
