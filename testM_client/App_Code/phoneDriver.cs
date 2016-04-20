@@ -231,14 +231,18 @@ namespace testM_client
 
                 foreach (var rcm in Scene.caseList)
                 {
-                    runCase(rcm.id);
+                    if(!runCase(rcm.id))
+                    {
+                        logHelper.error("批量执行案例失败");
+                        break;
+                    }
                 }
             }
 
         }
 
 
-        private void runCase(int ID)
+        private bool runCase(int ID)
         {
             caseResult_req req = new caseResult_req();
             req.ID = ID;
@@ -247,6 +251,7 @@ namespace testM_client
 
 
             XElement caseXml = testHelper.rc.GetSceneCase(ID);
+            if (caseXml == null) return false;
 
 
             string runCasePath = runPath + ID + "/";
@@ -280,7 +285,7 @@ namespace testM_client
                 try
                 {
                     testHelper.rc.caseResult(req);
-                    return;
+                    return true;
                 }
                 catch (Exception e)
                 {
@@ -288,8 +293,7 @@ namespace testM_client
                 }
             }
 
-           
-             throw new Exception("上传平台失败");
+             return false;
             
         }
 

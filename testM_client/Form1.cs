@@ -112,7 +112,6 @@ namespace testM_client
                     phoneSceneRun psr = new phoneSceneRun(pd.runScene);
                     psr.BeginInvoke(new AsyncCallback(runCallBack), pd);
                 }
-
             }
             
         }
