@@ -198,38 +198,41 @@ namespace testM_client
        /// </summary>
         public void runScene()
         {
-
-            var Scene = testHelper.rc.GetRunScene(this.device);
-
-            if (!string.IsNullOrEmpty(Scene.installApk) && string.IsNullOrEmpty(Scene.installResult))//安装任务未完成,先进行安装
+            while (true)
             {
+                var Scene = testHelper.rc.GetRunScene(this.device);
+                if (Scene == null) break;
 
-                string filePath = System.Environment.CurrentDirectory + "\\apkInstall\\" + this.device + "\\";
-
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                }
-                if (testHelper.rc.downApk(Scene.installApk, filePath))
+                if (!string.IsNullOrEmpty(Scene.installApk) && string.IsNullOrEmpty(Scene.installResult))//安装任务未完成,先进行安装
                 {
 
-                    Scene.installResult = this.install(filePath);
-                    //***************此处上传安装结果******************//
-                    SceneInstallResult_req req = new SceneInstallResult_req();
-                    try
+                    string filePath = System.Environment.CurrentDirectory + "\\apkInstall\\" + this.device + "\\";
+
+                    if (!Directory.Exists(filePath))
                     {
-                        testHelper.rc.SceneInstallResult(req);
+                        Directory.CreateDirectory(filePath);
                     }
-                    catch (Exception e)
+                    if (testHelper.rc.downApk(Scene.installApk, filePath))
                     {
-                        logHelper.error(e);
+
+                        Scene.installResult = this.install(filePath);
+                        //***************此处上传安装结果******************//
+                        SceneInstallResult_req req = new SceneInstallResult_req();
+                        try
+                        {
+                            testHelper.rc.SceneInstallResult(req);
+                        }
+                        catch (Exception e)
+                        {
+                            logHelper.error(e);
+                        }
                     }
                 }
-            }
 
-            foreach (var rcm in Scene.caseList)
-            {
-                runCase(rcm.id);
+                foreach (var rcm in Scene.caseList)
+                {
+                    runCase(rcm.id);
+                }
             }
 
         }
