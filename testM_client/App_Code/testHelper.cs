@@ -156,7 +156,7 @@ namespace testM_client
 
             string ID = "null";
 
-            var appXE = _tc.caseXml.XPathSelectElement("//R_InitStep/ParamBinding[@name='applicationID']");
+            var appXE = _tc.caseXml.XPathSelectElement("//Step[@name='R_InitStep']/ParamBinding[@name='applicationID']");
             if (appXE != null)
             {
                 ID = appXE.Attribute("value").Value; 
