@@ -231,6 +231,13 @@ namespace testM_client
 
                 foreach (var rcm in Scene.caseList)
                 {
+                    if (rcm.state != null && rcm.state > 0)
+                    {
+                        continue;
+                    
+                    
+                    }
+                   
                     if(!runCase(rcm.id))
                     {
                         logHelper.error("批量执行案例失败");
