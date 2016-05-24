@@ -11,8 +11,19 @@ namespace openCaseAPI
 {
     public partial class runClient
     {
-        
 
+        public delegate void errorHandler(Exception e);
+
+
+        public event errorHandler errorEvent; //声明eror事件  
+
+        private void onError(Exception e)
+        {
+            if(errorEvent!=null)
+            {
+                errorEvent(e);
+            }
+        }
         
        
         public delegate void DebugEventHandler(Object sender, DebugEventArgs e);
@@ -28,7 +39,7 @@ namespace openCaseAPI
         public delegate void SceneEventHandler(Object sender);
 
         /// <summary>
-        /// 注册Scene事件(同步),Scene事件在开始后不会立刻反馈给平台.(调用全部结束后,会反馈给平台调用信息--未实现)
+        /// 注册Scene事件(同步),Scene事件在开始后不会立刻反馈给平台.
         /// </summary>
         public event SceneEventHandler SceneEvent; //声明Scene事件  
 

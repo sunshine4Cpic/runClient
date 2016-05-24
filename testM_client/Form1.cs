@@ -113,7 +113,6 @@ namespace testM_client
                     psr.BeginInvoke(new AsyncCallback(runCallBack), pd);
                 }
             }
-            
         }
 
         private void runCallBack(IAsyncResult result)

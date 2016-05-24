@@ -215,17 +215,22 @@ namespace testM_client
                     if (testHelper.rc.downApk(Scene.installApk, filePath))
                     {
 
-                        Scene.installResult = this.install(filePath);
+                        
                         //***************此处上传安装结果******************//
                         SceneInstallResult_req req = new SceneInstallResult_req();
-                        try
-                        {
-                            testHelper.rc.SceneInstallResult(req);
-                        }
-                        catch (Exception e)
-                        {
-                            logHelper.error(e);
-                        }
+
+                        req.installResult = this.install(filePath);
+                        req.ID = Scene.id;
+                      
+                       
+                        if(!testHelper.rc.SceneInstallResult(req))
+                            logHelper.error("上传安装结果失败 场景ID:" + Scene.id);
+
+                    }
+                    else
+                    {
+                        logHelper.error("下载apk失败 场景ID:" + Scene.id);
+
                     }
                 }
 
@@ -234,14 +239,12 @@ namespace testM_client
                     if (rcm.state != null && rcm.state > 0)
                     {
                         continue;
-                    
-                    
                     }
                    
                     if(!runCase(rcm.id))
                     {
-                        logHelper.error("批量执行案例失败");
-                        break;
+                        logHelper.error("批量执行案例失败 id:" + rcm.id);
+                        continue;//报错继续下一条;
                     }
                 }
             }
@@ -274,9 +277,9 @@ namespace testM_client
                 this.run(runCasePath);
 
             }
-            catch
+            catch (Exception e )
             {
-                logHelper.info(string.Format("{0}执行测试失败,ID:{1}", device, ID));
+                logHelper.error(e);
             }
 
             req.endDate = DateTime.Now;
@@ -286,21 +289,12 @@ namespace testM_client
 
             req.resultXML = this.resultXml.ToString();
             req.resultPath = "http://" + IP + "/" + ID + "/";
-            int i;
-            for (i = 0; i < 3; i++)
-            {
-                try
-                {
-                    testHelper.rc.caseResult(req);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    logHelper.error(e);
-                }
-            }
 
-             return false;
+            
+            if(testHelper.rc.caseResult(req))
+                return true;
+            else
+                return false;
             
         }
 
