@@ -240,7 +240,9 @@ namespace testM_client
                     {
                         continue;
                     }
-                   
+
+                    logHelper.error(this.listBoxText + "开始执行执行案例 id:" + rcm.id);
+
                     if(!runCase(rcm.id))
                     {
                         logHelper.error("批量执行案例失败 id:" + rcm.id);
@@ -286,7 +288,8 @@ namespace testM_client
 
 
             req.state = 1;
-
+            if (this.resultXml == null)
+                this.resultXml = this.caseXml;
             req.resultXML = this.resultXml.ToString();
             req.resultPath = "http://" + IP + "/" + ID + "/";
 

@@ -101,7 +101,6 @@ namespace openCaseAPI
         public application_res GetApk(string appID)
         {
 
-
             Uri apiUri = new Uri(webAddress, "api/runClient/application/" + appID);
             var reader = Getself(apiUri);
 

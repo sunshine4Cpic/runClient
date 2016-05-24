@@ -6,8 +6,11 @@ using System.Text;
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Log4net.config", Watch = true)]
 namespace testM_client
 {
+     
+
     public class logHelper
     {
+       
         public static void error(Exception ex)
         {
             log4net.ILog log = log4net.LogManager.GetLogger("");
@@ -22,16 +25,15 @@ namespace testM_client
             Console.WriteLine("*** error:" + ex + " ***");
         }
 
-        public static void log(string txt)
-        {
-            Console.WriteLine("*** log:" + txt + " ***");
-        }
+
 
         public static void info(string txt)
         {
-
-            Console.WriteLine("*** info:" + txt + " ***");
+            Console.WriteLine(txt);
+            log4net.ILog log = log4net.LogManager.GetLogger("Info");
+            log.Info(txt);
 
         }
+
     }
 }

@@ -51,8 +51,8 @@ namespace testM_client
             
             InitializeComponent();
 
-            
-           
+
+
             Console.WriteLine("获取手机设备信息.......");
             pdl = getPhoneList();
             this.listBox1.DataSource = pdl;
@@ -81,6 +81,8 @@ namespace testM_client
             rc.DebugEvent += phone.Debug;
 
             rc.SceneEvent += runScene;
+
+            rc.errorEvent += logHelper.error;
 
             foreach (var p in pdl)
             {
