@@ -241,7 +241,7 @@ namespace testM_client
                         continue;
                     }
 
-                    logHelper.error(this.listBoxText + "开始执行执行案例 id:" + rcm.id);
+                    logHelper.info(this.listBoxText + "开始执行执行案例 id:" + rcm.id);
 
                     if(!runCase(rcm.id))
                     {

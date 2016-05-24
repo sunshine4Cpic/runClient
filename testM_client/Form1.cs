@@ -53,7 +53,7 @@ namespace testM_client
 
 
 
-            Console.WriteLine("获取手机设备信息.......");
+            logHelper.info("获取手机设备信息.......");
             pdl = getPhoneList();
             this.listBox1.DataSource = pdl;
             this.listBox1.DisplayMember = "listBoxText";
