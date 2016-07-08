@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\logHelper.cs" />
+    <Compile Include="App_Code\webTestClient.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,6 +142,10 @@
     <ProjectReference Include="..\chromeHelper\chromeHelper.csproj">
       <Project>{031f2500-bb70-48b8-9044-1848cbfdf17c}</Project>
       <Name>chromeHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\chromeWebHelper\chromeWebHelper.csproj">
+      <Project>{d0b0339a-7b7b-49cb-8087-c9ca6141c67c}</Project>
+      <Name>chromeWebHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\openCaseAPI\openCaseAPI.csproj">
       <Project>{bd7c650c-17f8-4ae7-92ed-2afcb393dcde}</Project>

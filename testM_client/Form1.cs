@@ -26,6 +26,8 @@ namespace testM_client
 
         List<phoneDriver> pdl;//设备列表
 
+        webTestClient wtc;//web自动化
+
 
         Uri webAddress;
 
@@ -51,15 +53,13 @@ namespace testM_client
             
             InitializeComponent();
 
-
-
             logHelper.info("获取手机设备信息.......");
             pdl = getPhoneList();
             this.listBox1.DataSource = pdl;
             this.listBox1.DisplayMember = "listBoxText";
             this.listBox1.ValueMember = "device";
 
-
+            wtc = new webTestClient();
            
            
         }
@@ -76,9 +76,15 @@ namespace testM_client
 
             var phone = this.listBox1.SelectedItem as phoneDriver;
 
+            //什么都不选就是web自动化
+            if(phone!=null)
+                rc.DebugEvent += phone.Debug;
+            else
+                rc.DebugEvent += wtc.Debug;
+
        
 
-            rc.DebugEvent += phone.Debug;
+            
 
             rc.SceneEvent += runScene;
 

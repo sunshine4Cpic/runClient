@@ -32,9 +32,7 @@ namespace chromeHelper
         //public static string device;
         public  string resultPath;
 
-        public  chromeTestCase ctc;
-
-        public  int snapshotNum;
+        public chromeTestCase ctc { get; set; }
 
 
         /// <summary>
@@ -301,9 +299,10 @@ namespace chromeHelper
         {
             try
             {
-                string fileName = snapshotNum + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".jpg";
+                string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".jpg";
                 ch.GetScreenshot().SaveAsFile(resultPath + fileName, System.Drawing.Imaging.ImageFormat.Jpeg);
                 ts.Step.SetAttributeValue("Photo", fileName);
+                
                 
             }
             catch { }

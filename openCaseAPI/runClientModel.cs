@@ -28,6 +28,18 @@ namespace openCaseAPI
         public abstract void Debug(Object sender, runClient.DebugEventArgs e);
         
     }
+
+    /// <summary>
+    /// web自动化抽象类
+    /// </summary>
+    public abstract class webClientAbs
+    {
+        public string IP { set; get; }
+        public string mark { set; get; }
+        public abstract void Debug(Object sender, runClient.DebugEventArgs e);
+    }
+
+
     public class application_res
     {
         public int id { set; get; }

@@ -1,27 +1,19 @@
 ﻿using BaseHelper;
-using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml.Linq;
 
-namespace chromeHelper
+namespace chromeWebHelper
 {
-
-    public class chromeTestCase : baseTestCase
+    public class chromeWebCase:baseTestCase
     {
         TestHelper th;
 
         private string _device;
-        public string device
-        {
-            get { return _device; }
-            set { _device = value; if (th != null)th.isInitClikc = false; }
-        }
+      
 
-        public int port { get; set; }
         //案例ID
         public string CaseID
         {
@@ -44,16 +36,18 @@ namespace chromeHelper
             set;
         }
 
-     
+
+        public chromeWebCase(int port)
+        {
+            th = new TestHelper();
+            th.port = port;
+        }
+       
         
         private void init()
         {
-            CloseAll();
+          
 
-
-
-
-            th.ctc = this;
            
             this.StepList = new List<TestStep>();
 
@@ -63,7 +57,6 @@ namespace chromeHelper
                 throw new Exception("无xml");
             }
             this.CaseName = resultXml.Attribute("desc").Value;
-            //this.CaseID = resultXml.Attribute("customno").Value;
             List<XElement> steps = (from e in resultXml.Descendants("Step")
                                     select e).ToList();
 
@@ -78,16 +71,10 @@ namespace chromeHelper
 
         }
 
-       
 
 
-        public chromeTestCase(string device,int port)
-        {
-            th = new TestHelper();
-            this.device = device;
-            this.port = port;
-        }
-       
+
+        
 
 
         public override void run(string resultPath)
@@ -99,7 +86,7 @@ namespace chromeHelper
             try
             {
                 init();
-                th.KillPort(this.port);
+                th.KillPort(th.port);
             }
             catch (Exception e) { Console.WriteLine("chrome-init错误.......err:" + e.Message); }
 
@@ -137,9 +124,7 @@ namespace chromeHelper
                 {
                     step.ResultStatic = "3";
                     step.ResultMsg = e.Message;
-
-
-                    th.snapshot("fail.jpg");
+                    th.snapshot(step, "fail.jpg");
                     break;
 
                 }
@@ -161,7 +146,6 @@ namespace chromeHelper
             
         }
 
-     
         public override void CloseAll()
         {
             //要不干脆 kill
@@ -173,6 +157,6 @@ namespace chromeHelper
             }
             catch { }
         }
-
+       
     }
 }

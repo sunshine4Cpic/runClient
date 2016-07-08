@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testMyCase", "testMyCase\te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test2", "test2\test2.csproj", "{7F749BD2-F1F2-4886-B5BF-92576E3B77FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chromeWebHelper", "chromeWebHelper\chromeWebHelper.csproj", "{D0B0339A-7B7B-49CB-8087-C9CA6141C67C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{7F749BD2-F1F2-4886-B5BF-92576E3B77FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F749BD2-F1F2-4886-B5BF-92576E3B77FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F749BD2-F1F2-4886-B5BF-92576E3B77FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0B0339A-7B7B-49CB-8087-C9CA6141C67C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0B0339A-7B7B-49CB-8087-C9CA6141C67C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0B0339A-7B7B-49CB-8087-C9CA6141C67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0B0339A-7B7B-49CB-8087-C9CA6141C67C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +84,6 @@ Global
 		{E6D97105-1B26-49E5-92CC-6CD17287FF23} = {D3AF528C-BF56-4971-A5B8-D298777C804D}
 		{031F2500-BB70-48B8-9044-1848CBFDF17C} = {D3AF528C-BF56-4971-A5B8-D298777C804D}
 		{BD7C650C-17F8-4AE7-92ED-2AFCB393DCDE} = {A3DF99BF-423A-4324-A803-F26ADADE06EB}
+		{D0B0339A-7B7B-49CB-8087-C9CA6141C67C} = {D3AF528C-BF56-4971-A5B8-D298777C804D}
 	EndGlobalSection
 EndGlobal
