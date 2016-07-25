@@ -68,7 +68,7 @@ namespace openCaseAPI
             { // 如果有对象注册  
                 foreach (DebugEventHandler de in DebugEvent.GetInvocationList())
                 {
-                    Console.WriteLine("DebugEvent begin...");
+                   //Console.WriteLine("DebugEvent begin...");
                     de.BeginInvoke(this, e, new AsyncCallback(DebugCallBack), de);
                 }
             }
@@ -77,7 +77,8 @@ namespace openCaseAPI
 
         private void DebugCallBack(IAsyncResult result)
         {
-            Console.WriteLine("DebugEvent end...");
+            //调用结束后干些什么
+            //Console.WriteLine("DebugEvent end...");
         }
 
         protected void OnScene()

@@ -105,9 +105,6 @@ namespace testM_client
             this.listBox1.Enabled = false;
 
             rc.startService();
-
-            
-           
         }
 
         private void runScene(Object sender)

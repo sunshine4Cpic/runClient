@@ -196,7 +196,7 @@ namespace chromeWebHelper
             }
             if (this.Name != null)
             {
-                xp.Append("[@Name='" + this.Name + "']");
+                xp.Append("[@name='" + this.Name + "']");
             }
             
 

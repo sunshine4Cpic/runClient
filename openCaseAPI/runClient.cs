@@ -11,6 +11,10 @@ namespace openCaseAPI
 {
     public partial class runClient
     {
+        public runClient()
+        {
+
+        }
 
         public runClient(Uri webAddress)
         {

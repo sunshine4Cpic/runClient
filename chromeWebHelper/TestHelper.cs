@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -122,12 +123,21 @@ namespace chromeWebHelper
             else
                 we = ch.FindElementByXPath(xpath);
 
-            int y = we.Location.Y;
+            
 
-            ((IJavaScriptExecutor)ch).ExecuteScript("arguments[0].scrollIntoView();", we);
+            //((IJavaScriptExecutor)ch).ExecuteScript("arguments[0].scrollIntoView();", we);
 
+            //第二中办法
+            //int y = we.Location.Y;
             //String js = String.Format("window.scroll(0, {0})", y / 2);
             //((IJavaScriptExecutor)ch).ExecuteScript(js);
+
+
+            //第三种 
+            Actions builder = new Actions(ch);
+                        builder.MoveToElement(we).Perform();
+
+           // Console.WriteLine(we.)
             return we;
         }
     }
