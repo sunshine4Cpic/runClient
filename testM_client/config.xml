@@ -1,4 +1,4 @@
 ﻿<Config>
-  
+  <appium device="479fae53e883ff77ce06e0449c703afe238c8508" model="三星 note4" url ="http://172.16.3.84:4723/wd/hub"   />
   </Config>
   

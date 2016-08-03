@@ -191,7 +191,7 @@ namespace testM_client
 
 
             var app = testHelper.rc.GetApk(ID);
-            _tc.app = app.iosPackage;
+            _tc.app = app.iosPackeg;
 
 
 

@@ -46,7 +46,7 @@ namespace openCaseAPI
         public string name { set; get; }
         public string androidPackeg { set; get; }
         public string mainActivity { set; get; }
-        public string iosPackage { get; set; }
+        public string iosPackeg { get; set; }
         public bool clearCache { set; get; }
         public string robotiumApk { get; set; }
     }

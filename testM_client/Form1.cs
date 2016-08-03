@@ -158,6 +158,7 @@ namespace testM_client
                 foreach (XElement x in config.Elements("appium"))
                 {
                     phoneDriver ad = new phoneDriver();
+                    ad.IP = this.IP;
                     ad.model = x.Attribute("model").Value;
                     ad.device = x.Attribute("device").Value;
                     appiumHelper.appiumTestCase caseHelper = new appiumHelper.appiumTestCase();
