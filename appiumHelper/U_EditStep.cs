@@ -53,13 +53,14 @@ namespace appiumHelper
             if (xe != null)
                 this.inputText = xe.Attribute("value").Value;
 
+
             xe = (from e in step.Descendants("ParamBinding")
                   where e.Attribute("name").Value == "clearMode"
                            select e).FirstOrDefault();
-
-
             if (xe != null && xe.Attribute("value").Value.Trim() != "")
                 this.clearMode = Convert.ToInt32(xe.Attribute("value").Value);
+
+
 
             xe = (from e in step.Descendants("ParamBinding")
                   where e.Attribute("name").Value == "InputCompleteClick"
@@ -76,7 +77,7 @@ namespace appiumHelper
             try
             {
 
-                IWebElement ele = TestHelper.waitForElementByXPath(this);
+                IWebElement ele = helper.waitForElementByXPath(this);
 
                 if (ele != null)
                 {
@@ -104,25 +105,26 @@ namespace appiumHelper
         public Boolean sendKeyToElement(IWebElement sendEle, string things)
         {
             
-            if (clearMode != 0)
+            if (clearMode == 1)
             {
-                try
-                {
-                    sendEle.Click();
-                    sendEle.Click();
-                    //判断里面是否有内容
-                    IWebElement mElement = TestHelper.Driver.FindElementByName("全选");
-                    if (mElement.Displayed != false)
-                    {
-                        mElement.Click();
-                        TestHelper.Driver.FindElementByName("删除").Click();
-                    }
+                //try
+                //{
+                //    sendEle.Click();
+                //    sendEle.Click();
+                //    //判断里面是否有内容
+                //    IWebElement mElement = TestHelper.Driver.FindElementByName("全选");
+                //    if (mElement.Displayed != false)
+                //    {
+                //        mElement.Click();
+                //        TestHelper.Driver.FindElementByName("删除").Click();
+                //    }
 
-                }
-                catch { }
+                //}
+                //catch { }
+                sendEle.Clear();
             }else
             {
-                sendEle.Clear();
+                
             }
             
             
@@ -132,7 +134,7 @@ namespace appiumHelper
             {
                 try
                 {
-                    TestHelper.Driver.FindElementByXPath
+                    helper.Driver.FindElementByXPath
                         ("//UIAToolbar/*[@label='" + InputCompleteClick + "']").Click();
                 }
                 catch { }

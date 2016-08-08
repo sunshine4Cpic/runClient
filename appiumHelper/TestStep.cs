@@ -137,7 +137,13 @@ namespace appiumHelper
             set;
         }
 
+        public TestHelper helper { get; set; }
+
         #endregion 属性
+
+        public TestStep()
+        {
+        }
         public TestStep(XElement step)
         {
             this.Step = step;

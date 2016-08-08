@@ -28,7 +28,7 @@ namespace appiumHelper
         {
             try
             {
-                TestHelper.swipAction(this.Direction);
+                helper.swipAction(this.Direction);
                
             }
             catch (Exception e)

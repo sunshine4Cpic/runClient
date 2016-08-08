@@ -16,12 +16,12 @@ namespace appiumHelper
 {
     public class TestHelper
     {
-        public static AppiumDriver Driver;
+        public AppiumDriver Driver;
         
 
 
         //等待XPATH元素查找
-        public static IWebElement waitForElementByXPath(TestStep ts)
+        public IWebElement waitForElementByXPath(TestStep ts)
         {
         
             IWebElement ele = null;
@@ -81,7 +81,7 @@ namespace appiumHelper
     
 
            //查找元素用文字
-        public static IWebElement findElementbyName(string name, int index)
+        public IWebElement findElementbyName(string name, int index)
         {
             IWebElement ele = null;
             IList<IWebElement> list = null;
@@ -121,7 +121,7 @@ namespace appiumHelper
         }
         
                //定向滑动
-        public static void swipAction(string direction)
+        public void swipAction(string direction)
         {
             direction = direction.ToLower();//变小写
             IWebElement myScrean = Driver.FindElementByXPath("//UIAApplication[1]/UIAWindow[1]");
@@ -147,16 +147,36 @@ namespace appiumHelper
 
 
         }
-        //坐标点击
-        public static void Tap(int x, int y)
+        //public static void swip(int x1, int y1, int x2, int y2)
+        //{
+
+        //    Swipe(x1, y1, x1, y1-(y2 - y1));
+        
+        //}
+
+                //坐标点击
+        public void Tap(int x, int y)
         {
-            ITouchAction a2 = new TouchAction(Driver);
-            a2.Tap(x, y);
+          
+            ITouchAction a2 = new TouchAction(Driver)
+                .Press(x, y)
+                .Wait(50)
+                .Release();
+           
             a2.Perform();
 
         }
 
-        public static void Tap(IWebElement ele)
+        public void Tap(IWebElement ele,int offset_x,int offset_y)
+        {
+            int x = ele.Location.X + ele.Size.Width / 2 + offset_x;
+            int y = ele.Location.Y + ele.Size.Height / 2 + offset_y;
+            Tap(x, y);
+        }
+
+        
+
+        public void Tap(IWebElement ele)
         {
             int x =  ele.Location.X +ele.Size.Width/2;
             int y =  ele.Location.Y +ele.Size.Height/2;
@@ -164,7 +184,7 @@ namespace appiumHelper
         }
 
         //自定义滑动
-        public static void Swipe(int startX, int startY, int endX, int endY, int duration)
+        public void Swipe(int startX, int startY, int endX, int endY, int duration)
         {
 
             ITouchAction touchAction = new TouchAction(Driver)
@@ -175,13 +195,13 @@ namespace appiumHelper
             touchAction.Perform();
         }
 
-        public static void Swipe(int startX, int startY, int endX, int endY)
+        public void Swipe(int startX, int startY, int endX, int endY)
         {
             Swipe(startX, startY, endX, endY, 800);
         }
 
         //反射创建类
-        public static TestStep fanse(string ClassName, XElement step)
+        public TestStep fanse(string ClassName, XElement step)
         {
             TestStep test;
             try
@@ -194,6 +214,7 @@ namespace appiumHelper
                 {
                     test = new TestStep(step);
                 }
+                test.helper = this;
             }catch(Exception){
                 test = new TestStep(step);
             }

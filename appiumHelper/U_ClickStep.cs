@@ -23,6 +23,18 @@ namespace appiumHelper
             set;
         }
 
+        /// <summary>
+        /// 坐标
+        /// </summary>
+        public string offsetXY
+        {
+            get;
+            set;
+        }
+        public U_ClickStep()
+        {
+
+        }
 
         public U_ClickStep(XElement step)
             : base(step)
@@ -33,31 +45,42 @@ namespace appiumHelper
             if (xe != null)
                 this.PointXY = xe.Attribute("value").Value;
 
+            xe = step.Descendants("ParamBinding").FirstOrDefault(t => t.Attribute("name").Value == "offsetXY");
+            if(xe!=null)
+                this.offsetXY = xe.Attribute("value").Value;
+
 
         }
         public override void Excuo()
         {
             try
             {
-                if (this.PointXY != null && this.PointXY.Trim()!="")
+                if (!string.IsNullOrEmpty(PointXY))
                 { //坐标点击
-                    string[] arry = this.PointXY.Split(',');
-                    int x, y;
+                    var xy = getXY(PointXY);
 
-                    x = Convert.ToInt32(arry[0]);
-                    y = Convert.ToInt32(arry[1]);
-
-                    TestHelper.Tap(x, y);
+                    helper.Tap(xy[0], xy[1]);
                 }
                 else
                 {
-                    IWebElement ele = TestHelper.waitForElementByXPath(this);
+                    IWebElement ele = helper.waitForElementByXPath(this);
                     if (ele != null)
                     {
-                        if (ele.Displayed == true)
-                            ele.Click();
+                        if(!string.IsNullOrEmpty(offsetXY))
+                        {
+
+                           
+                            var xy = getXY(offsetXY);
+                            helper.Tap(ele, xy[0], xy[1]);
+                        }
                         else
-                            TestHelper.Tap(ele);
+                        {
+                            if (ele.Displayed == true)
+                                ele.Click();
+                            else
+                                helper.Tap(ele);
+                        }
+
                     }
                     else
                     {
@@ -76,6 +99,26 @@ namespace appiumHelper
             }
 
             base.Excuo();
+        }
+
+
+        private int[] getXY(string XY)
+        {
+            int[] rt = { 0, 0 };
+            try
+            {
+                string[] arry = XY.Split(',');
+                rt[0] = Convert.ToInt32(arry[0]);
+                rt[1] = Convert.ToInt32(arry[1]);
+            }
+            catch (Exception)
+            {
+                
+                
+            }
+            
+
+            return rt;
         }
 
     }

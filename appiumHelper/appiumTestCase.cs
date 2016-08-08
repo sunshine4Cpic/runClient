@@ -96,7 +96,7 @@ namespace appiumHelper
             foreach (XElement step in steps)
             {
                 string name = step.Attribute("name").Value;
-                TestStep ts = TestHelper.fanse(name, step);
+                TestStep ts = helper.fanse(name, step);
 
                 this.StepList.Add(ts);
             }
@@ -121,7 +121,7 @@ namespace appiumHelper
 
             try
             {
-                TestHelper.Driver.Quit();
+                helper.Driver.Quit();
             }
             catch
             {
@@ -162,7 +162,7 @@ namespace appiumHelper
 
                     try
                     {
-                        Screenshot screen = TestHelper.Driver.GetScreenshot();
+                        Screenshot screen = helper.Driver.GetScreenshot();
                         screen.SaveAsFile(resultPath + i + ".jpg", ImageFormat.Jpeg);
 
                         step.Step.SetAttributeValue("Photo", i + ".jpg");

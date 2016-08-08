@@ -55,10 +55,10 @@ namespace appiumHelper
 
 
 
-
+           
             //CancelUpdate(driver);
 
-            TestHelper.Driver = driver;
+            helper.Driver = driver;
             base.Excuo();
 
             

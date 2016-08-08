@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="U_selectSwip.cs" />
     <Compile Include="U_InitStep.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="U_CheckStep.cs" />

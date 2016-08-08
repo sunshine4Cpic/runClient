@@ -20,7 +20,7 @@ namespace appiumHelper
         {
             try
             {
-                IWebElement ele = TestHelper.waitForElementByXPath(this);
+                IWebElement ele = helper.waitForElementByXPath(this);
                 if (ele == null)
                 {
                   
