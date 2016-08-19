@@ -17,8 +17,9 @@ namespace appiumHelper
     public class TestHelper
     {
         public AppiumDriver Driver;
-        
 
+        public int width { get; set; }
+        public int height { get; set; }
 
         //等待XPATH元素查找
         public IWebElement waitForElementByXPath(TestStep ts)
@@ -30,40 +31,16 @@ namespace appiumHelper
             {
                 ele = null;
                 //定时
-                
-               
                 try
                 {
-                    var els = Driver.FindElementsByXPath(ts.Xpath);
-
-                    if (els.Count >= ts.index)
+                    var els = Driver.FindElementsByXPath(ts.Xpath2);
+                    
+                    if (els.Count > ts.index)
                     {
                         ele = els[ts.index];
                         break;
                     }
-                    else
-                    {
-                        var els2 = Driver.FindElementsByXPath(ts.Xpath2);
-                        if (els2.Count >= ts.index)
-                        {
-                                //前期等待3s
-                            swipAction("UP");
-                            
-                        }
-
-                        continue;
-                    }
-                    /*
-                    if (ele.Displayed == true && ele.Enabled == true)//判断页面元素是否在页面上显示
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        //前期等待3s
-                        swipAction("UP");
-                    }*/
-
+                    
                 }
                 catch (Exception)
                 {
@@ -74,9 +51,34 @@ namespace appiumHelper
 
             }
 
+            int top = height / 4;
+            int bottom = top * 3;
+            int center = height / 2;
+
+            if (ele.Location.Y > 0 && ele.Location.Y < height)
+            {
+
+            }
+            else
+            {
+                int leave = ele.Location.Y - center;
+
+                int oneHeight = bottom - top;
+                for (int i = 0; i < leave / oneHeight; i++)
+                {
+                    Swipe(width / 2, bottom, width / 2, top, 800);
+
+                }
+
+                int last = leave % oneHeight;
+                if (last > 100)
+                {
+                    Swipe(width / 2, bottom, width / 2, bottom - last, 800);
+                }
+               
+
+            }
             return ele;
-
-
         }
     
 
@@ -124,25 +126,24 @@ namespace appiumHelper
         public void swipAction(string direction)
         {
             direction = direction.ToLower();//变小写
-            IWebElement myScrean = Driver.FindElementByXPath("//UIAApplication[1]/UIAWindow[1]");
-            Size mySize = myScrean.Size;
-            int height = mySize.Height;
-            int width = mySize.Width;//获得屏幕大小
+
+            int padding = 30;
+            
             if (direction == "left")
             {
-                Swipe(width -10, height / 2, 10, height / 2, 800);
+                Swipe(width - padding, height / 2, padding, height / 2, 800);
             }
             else if (direction == "right")
             {
-                Swipe(10, height / 2, width -10, height / 2, 800);
+                Swipe(padding, height / 2, width - padding, height / 2, 800);
             }
             else if (direction == "up")
             {
-                Swipe(width / 2, height / 2, width / 2, 10, 800);
+                Swipe(width / 2, height / 4 * 3, width / 2, padding, 800);
             }
             else if (direction == "down")
             {
-                Swipe(width / 2, height / 2, width / 2, height - 10, 800);
+                Swipe(width / 2, height / 4, width / 2, height - padding, 800);
             }
 
 
@@ -167,11 +168,25 @@ namespace appiumHelper
 
         }
 
-        public void Tap(IWebElement ele,int offset_x,int offset_y)
+        public void Tap(IWebElement ele,int offset_x,int offset_y,int count)
         {
-            int x = ele.Location.X + ele.Size.Width / 2 + offset_x;
-            int y = ele.Location.Y + ele.Size.Height / 2 + offset_y;
-            Tap(x, y);
+            int x=ele.Location.X+ele.Size.Width/2;
+            int y=ele.Location.Y+ele.Size.Height/2;
+            if (offset_x > 0)
+                x += ele.Size.Width / 2 + offset_x;
+            else if (offset_x<0)
+                x = x - ele.Size.Width / 2 + offset_x;
+
+            if(offset_y>0)
+                //y += ele.Size.Height / 2 + offset_y;
+                y +=  offset_y;
+            else if (offset_y < 0)
+                y = y - ele.Size.Height / 2 + offset_y;
+            for (int i = 0; i < count; i++)
+            {
+
+                Tap(x, y);
+            }
         }
 
         

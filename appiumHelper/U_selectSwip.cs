@@ -77,7 +77,7 @@ namespace appiumHelper
             helper.Swipe(Movewidth, Startheight, Movewidth, Startheight - (Moveheight - Startheight), 800);
 
 
-
+            base.Excuo();
        
 
                 

@@ -159,11 +159,19 @@ namespace testM_client
                 {
 
                     var help = new robotiumHelper.robotiumTestCase();
-                    caseHelper = help;
+                   
 
                     help.device = this.device;
                     help.caseXml = this.caseXml;
                     help.init();
+
+                    //runApk 相同
+                    if (caseHelper is robotiumHelper.robotiumTestCase && ((robotiumHelper.robotiumTestCase)caseHelper).RunApk == help.RunApk)
+                        help.install = false;
+                    else
+                        help.install = true;
+                    caseHelper = help;
+                    
                 }
                 else if (name.Contains("UI_"))//uiautomator 初始化
                 {
@@ -246,7 +254,7 @@ namespace testM_client
                     if(!runCase(rcm.id))
                     {
                         logHelper.error("批量执行案例失败 id:" + rcm.id);
-                        continue;//报错继续下一条;
+                        break;//报错退出这个场景
                     }
                 }
             }

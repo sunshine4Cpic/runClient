@@ -59,6 +59,12 @@ namespace appiumHelper
             //CancelUpdate(driver);
 
             helper.Driver = driver;
+
+            var phoneSize = driver.Manage().Window.Size;
+            helper.width = phoneSize.Width;
+            helper.height = phoneSize.Height;
+
+
             base.Excuo();
 
             

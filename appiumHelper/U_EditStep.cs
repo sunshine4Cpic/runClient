@@ -57,9 +57,20 @@ namespace appiumHelper
             xe = (from e in step.Descendants("ParamBinding")
                   where e.Attribute("name").Value == "clearMode"
                            select e).FirstOrDefault();
-            if (xe != null && xe.Attribute("value").Value.Trim() != "")
-                this.clearMode = Convert.ToInt32(xe.Attribute("value").Value);
 
+            if (xe != null && xe.Attribute("value").Value.Trim() != "")
+            {
+               // this.clearMode = Convert.ToInt32(xe.Attribute("value").Value);
+                var tmp = xe.Attribute("value").Value;
+                if (tmp=="true")
+                    this.clearMode =1;//清除
+                else
+                    this.clearMode = Convert.ToInt32(xe.Attribute("value").Value);
+
+
+               
+            }
+   
 
 
             xe = (from e in step.Descendants("ParamBinding")

@@ -18,9 +18,13 @@ namespace robotiumHelper
 
         public string package { get; set; }
 
-        public bool? isClear { get; set; }
+        public bool isClear { get; set; }
 
-        
+
+        public bool install { get; set; }
+
+
+
 
         public override void run(string resultPath)
         {
@@ -32,8 +36,6 @@ namespace robotiumHelper
 
             Process runProcess = new Process();
             string batName = "RobotiumRunScript.bat";
-            if (isClear == true)
-                batName = "RobotiumRunScript2.bat";
 
 
             runProcess.StartInfo.FileName = System.Environment.CurrentDirectory + "/" + batName;
@@ -43,7 +45,7 @@ namespace robotiumHelper
             runProcess.StartInfo.RedirectStandardOutput = true;
 
             runProcess.StartInfo.Arguments = string.Format("{0} {1} {2} {3} {4}",
-                casePath, resultPath, device, apkPath, package);
+                casePath, resultPath, device, install ? apkPath : "no", isClear ? package : "no");
             runProcess.Start();
             runProcess.WaitForExit();
 

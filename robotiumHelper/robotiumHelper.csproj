@@ -58,7 +58,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RobotiumRunScript2.bat">
+    <EmbeddedResource Include="RobotiumRunScript_noClear.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

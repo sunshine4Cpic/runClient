@@ -31,6 +31,13 @@ namespace appiumHelper
             get;
             set;
         }
+
+        public int clickCnt
+        {
+            get;
+            set;
+
+        }
         public U_ClickStep()
         {
 
@@ -48,8 +55,25 @@ namespace appiumHelper
             xe = step.Descendants("ParamBinding").FirstOrDefault(t => t.Attribute("name").Value == "offsetXY");
             if(xe!=null)
                 this.offsetXY = xe.Attribute("value").Value;
+        
+            xe = (from e in step.Descendants("ParamBinding")
+                  where e.Attribute("name").Value == "clickCnt"
+                  select e).FirstOrDefault();
 
-
+            if (xe != null)
+            {
+                
+                var tmp = xe.Attribute("value").Value;
+                if(!string.IsNullOrEmpty(tmp))
+                    this.clickCnt = Int32.Parse(tmp);
+                else
+                    this.clickCnt = 1;
+            }
+                
+          
+            
+            
+           
         }
         public override void Excuo()
         {
@@ -58,8 +82,10 @@ namespace appiumHelper
                 if (!string.IsNullOrEmpty(PointXY))
                 { //坐标点击
                     var xy = getXY(PointXY);
-
-                    helper.Tap(xy[0], xy[1]);
+                   
+                    
+                        helper.Tap(xy[0], xy[1]);
+                    
                 }
                 else
                 {
@@ -69,9 +95,11 @@ namespace appiumHelper
                         if(!string.IsNullOrEmpty(offsetXY))
                         {
 
-                           
+                           // clickCnt = 10;
                             var xy = getXY(offsetXY);
-                            helper.Tap(ele, xy[0], xy[1]);
+                          
+                                helper.Tap(ele, xy[0], xy[1],clickCnt);
+                            
                         }
                         else
                         {

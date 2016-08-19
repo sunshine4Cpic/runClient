@@ -172,7 +172,7 @@ namespace appiumHelper
                         break;
                     case "index":
                         if (value.Trim() != "")
-                            this.index = Convert.ToInt32(value)-1;
+                            this.index = Convert.ToInt32(value) - 1;
                         break;
                     case "waitTime":
                         if (value.Trim() != "")

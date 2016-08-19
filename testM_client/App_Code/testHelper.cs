@@ -172,7 +172,7 @@ namespace testM_client
 
             _tc.RunApk = app.robotiumApk;
             _tc.package = app.androidPackeg;
-            _tc.isClear = !app.clearCache;
+            _tc.isClear = app.clearCache;
 
 
         }
