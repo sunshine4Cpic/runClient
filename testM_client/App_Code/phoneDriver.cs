@@ -101,12 +101,12 @@ namespace testM_client
         /// <returns></returns>
         public virtual bool run(string rPath)
         {
-            
 
+            logHelper.info("RunInit:" + rPath);
             RunInit(rPath);
-           
+            logHelper.info("run:" + rPath);
             caseHelper.run(rPath);
-
+            logHelper.info("runOver:" + rPath);
             this.resultXml = caseHelper.resultXml;
             
 
@@ -126,10 +126,11 @@ namespace testM_client
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(rPath);
                 FileInfo[] files = dirInfo.GetFiles();
-
+                //logHelper.info("file.Delete size:" + files.Count());
                 //删除不了会报错
                 foreach (FileInfo file in files)
                 {
+                    //logHelper.info("file.Delete:" + file.FullName);
                     try { file.Delete(); }
                     catch (Exception e)
                     {
@@ -157,6 +158,7 @@ namespace testM_client
 
                 if (name.Contains("R_"))//robotium 初始化
                 {
+                    //logHelper.info("init.robotium: start");
 
                     var help = new robotiumHelper.robotiumTestCase();
                    
